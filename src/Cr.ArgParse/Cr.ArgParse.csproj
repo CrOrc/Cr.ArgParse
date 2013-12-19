@@ -35,6 +35,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Argument.cs" />
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="IArgumentParser.cs" />
     <Compile Include="IParseResult.cs" />
