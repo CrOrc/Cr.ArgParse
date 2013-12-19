@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
@@ -20,11 +21,15 @@ namespace Cr.ArgParse
             else
                 preparedArgument = PrepareOptionalArgument(argument);
             var argumentAction = GetArgumentAction(preparedArgument);
+            if(argumentAction == null)
+                throw new Exception("Unregistered action exception");
         }
 
-        private ArgumentAction GetArgumentAction(Argument argument)
+        private IDictionary<string, Func<Argument, IArgumentAction>> actions = new Dictionary<string, Func<Argument, IArgumentAction>>(StringComparer.InvariantCultureIgnoreCase);
+
+        private IArgumentAction GetArgumentAction(Argument argument)
         {
-            return new ArgumentAction();
+            return new ArgumentAction(argument);
         }
 
         private Argument PreparePositionalArgument(Argument argument)

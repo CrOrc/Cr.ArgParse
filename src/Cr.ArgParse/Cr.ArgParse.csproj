@@ -38,6 +38,7 @@
     <Compile Include="Argument.cs" />
     <Compile Include="ArgumentAction.cs" />
     <Compile Include="ArgumentParser.cs" />
+    <Compile Include="IArgumentAction.cs" />
     <Compile Include="IArgumentParser.cs" />
     <Compile Include="IParseResult.cs" />
     <Compile Include="ListExtensions.cs" />
