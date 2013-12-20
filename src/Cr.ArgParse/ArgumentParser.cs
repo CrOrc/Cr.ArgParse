@@ -29,7 +29,7 @@ namespace Cr.ArgParse
 
         private IArgumentAction GetArgumentAction(Argument argument)
         {
-            return new ArgumentAction(argument);
+            return null;
         }
 
         private Argument PreparePositionalArgument(Argument argument)
