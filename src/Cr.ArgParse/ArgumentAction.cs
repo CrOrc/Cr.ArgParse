@@ -1,6 +1,6 @@
 ﻿namespace Cr.ArgParse
 {
-    public class ArgumentAction : IArgumentAction
+    public abstract class ArgumentAction : IArgumentAction
     {
         public Argument Argument { get; private set; }
 
@@ -9,9 +9,6 @@
             Argument = argument;
         }
 
-        public virtual void Call(IArgumentParser parser, ParseResult parseResult, object values, string optionString)
-        {
-            throw new System.NotImplementedException();
-        }
+        public abstract void Call(IArgumentParser parser, ParseResult parseResult, object values, string optionString);
     }
 }

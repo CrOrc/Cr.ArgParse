@@ -2,6 +2,9 @@
 
 namespace Cr.ArgParse
 {
+    /// <summary>
+    /// Allows to parse list of command line arguments
+    /// </summary>
     public interface IArgumentParser
     {
         IParseResult ParseArguments(IEnumerable<string> args);
