@@ -11,10 +11,12 @@ namespace Cr.ArgParse
         /// strings to identify argument. Empty for positional arguments.
         /// </summary>
         public IList<string> OptionStrings { get; set; }
+
         /// <summary>
         /// Name for storing parsing results.
         /// </summary>
         public string Destination { get; set; }
+
         /// <summary>
         /// Description of argument
         /// </summary>
@@ -25,6 +27,7 @@ namespace Cr.ArgParse
         /// One of "store", "store_const", "store_true", "store_false", "append", "append_const", "count".
         /// </summary>
         public string ActionName { get; set; }
+
         /// <summary>
         /// Custom action to be performed on argument. If present <see cref="ActionName"/> will be ignored.
         /// </summary>
@@ -36,8 +39,13 @@ namespace Cr.ArgParse
         public ValueCount ValueCount { get; set; }
 
         /// <summary>
-        /// Is argument required. Always true for positional arguments.
+        /// Is argument required.
         /// </summary>
         public bool IsRequired { get; set; }
+
+        /// <summary>
+        /// Default argument value
+        /// </summary>
+        public object DefaultValue { get; set; }
     }
 }

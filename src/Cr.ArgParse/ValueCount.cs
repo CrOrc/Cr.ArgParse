@@ -17,15 +17,22 @@ namespace Cr.ArgParse
         {
         }
 
-        public ValueCount(uint? min, uint? max)
+        private void Normalize()
         {
-            Min = min;
-            Max = max;
             if (!Min.HasValue && !Max.HasValue)
             {
                 Min = 0;
                 Max = 1;
             }
+            if (Max.HasValue && !Min.HasValue)
+                Min = 0;
+        }
+
+        public ValueCount(uint? min, uint? max)
+        {
+            Min = min;
+            Max = max;
+            Normalize();
             OriginalString = GetRegexString();
         }
 
@@ -65,11 +72,7 @@ namespace Cr.ArgParse
                 Min = values[0];
                 Max = values[1];
             }
-            if (!Min.HasValue && !Max.HasValue)
-            {
-                Min = 0;
-                Max = 1;
-            }
+            Normalize();
         }
 
         public string OriginalString { get; private set; }
