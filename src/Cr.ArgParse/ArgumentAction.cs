@@ -10,7 +10,7 @@ namespace Cr.ArgParse
         public IList<string> OptionStrings { get; private set; }
         public bool IsRequired { get; set; }
 
-    public ArgumentAction(Argument argument)
+        protected ArgumentAction(Argument argument)
         {
             Argument = argument;
             OptionStrings = new List<string>(Argument.OptionStrings ?? new string[] {});

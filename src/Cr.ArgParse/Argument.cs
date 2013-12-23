@@ -7,21 +7,24 @@ namespace Cr.ArgParse
     /// </summary>
     public class Argument
     {
-        private readonly List<string> optionStrings = new List<string>();
+        public Argument(Argument argument=null)
+        {
+            if (ReferenceEquals(argument,null)) return;
+            OptionStrings = argument.OptionStrings;
+            Destination = argument.Destination;
+            HelpText = argument.HelpText;
+            ActionName = argument.ActionName;
+            Action = argument.Action;
+            ValueCount = argument.ValueCount;
+            IsRequired = argument.IsRequired;
+            DefaultValue = argument.DefaultValue;
+            ConstValue = argument.ConstValue;
+        }
 
         /// <summary>
         /// strings to identify argument. Empty for positional arguments.
         /// </summary>
-        public IList<string> OptionStrings
-        {
-            get { return optionStrings; }
-            set
-            {
-                optionStrings.Clear();
-                if (value != null)
-                    optionStrings.AddRange(value);
-            }
-        }
+        public IList<string> OptionStrings { get; set;}
 
         /// <summary>
         /// Name for storing parsing results.
@@ -58,5 +61,11 @@ namespace Cr.ArgParse
         /// Default argument value
         /// </summary>
         public object DefaultValue { get; set; }
+
+        /// <summary>
+        /// Default argument value
+        /// </summary>
+        public object ConstValue { get; set; }
+
     }
 }

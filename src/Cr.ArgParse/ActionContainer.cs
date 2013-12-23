@@ -6,7 +6,7 @@ using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
 {
-    public class ActionContainer : IActionContainer
+    public class ActionContainer
     {
         private readonly IDictionary<string, Func<Argument, ArgumentAction>> actionFactories;
 
@@ -218,40 +218,42 @@ namespace Cr.ArgParse
 
         private Argument PreparePositionalArgument(Argument argument)
         {
-            if (ReferenceEquals(argument.ValueCount, null))
-                argument.ValueCount = new ValueCount();
+            var res = new Argument(argument);
+            if (ReferenceEquals(res.ValueCount, null))
+                res.ValueCount = new ValueCount(1);
             // mark positional arguments as required if at least one is always required
-            var valueCount = argument.ValueCount;
+            var valueCount = res.ValueCount;
             if (valueCount.Min.HasValue && valueCount.Min > 0)
-                argument.IsRequired = true;
+                res.IsRequired = true;
             else
             {
                 if (valueCount.Max == 1)
-                    argument.IsRequired = false;
-                else if (ReferenceEquals(argument.DefaultValue, null))
-                    argument.IsRequired = true;
+                    res.IsRequired = false;
+                else if (ReferenceEquals(res.DefaultValue, null))
+                    res.IsRequired = true;
             }
 
-            argument.OptionStrings = new string[] {};
-            return argument;
+            res.OptionStrings = new string[] {};
+            return res;
         }
 
         private Argument PrepareOptionalArgument(Argument argument)
         {
-            argument.OptionStrings =
+            var res = new Argument(argument);
+            res.OptionStrings =
                 (argument.OptionStrings ?? new string[] {}).Where(it => it.StartsWith(Prefixes)).ToList();
-            if (!argument.OptionStrings.Any())
+            if (!res.OptionStrings.Any())
                 throw new Exception("Optional argument should have name starting with prefix");
             // infer destination
-            if (string.IsNullOrWhiteSpace(argument.Destination) && argument.OptionStrings.Any())
+            if (string.IsNullOrWhiteSpace(res.Destination) && res.OptionStrings.Any())
             {
-                var longOptionStrings = argument.OptionStrings.Where(it => it.StartsWith(LongPrefixes)).Take(1).ToList();
-                argument.Destination =
-                    StripPrefix(longOptionStrings.FirstOrDefault() ?? argument.OptionStrings.FirstOrDefault());
+                var longOptionStrings = res.OptionStrings.Where(it => it.StartsWith(LongPrefixes)).Take(1).ToList();
+                res.Destination =
+                    StripPrefix(longOptionStrings.FirstOrDefault() ?? res.OptionStrings.FirstOrDefault());
             }
-            if (string.IsNullOrWhiteSpace(argument.Destination))
+            if (string.IsNullOrWhiteSpace(res.Destination))
                 throw new Exception("Destination should be specified for options like " + argument.OptionStrings[0]);
-            return argument;
+            return res;
         }
     }
 }

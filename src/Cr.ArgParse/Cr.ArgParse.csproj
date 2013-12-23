@@ -41,7 +41,6 @@
     <Compile Include="ArgumentGroup.cs" />
     <Compile Include="CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
-    <Compile Include="IArgumentActionContainer.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="ArgumentParser.cs" />
