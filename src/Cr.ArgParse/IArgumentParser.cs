@@ -7,7 +7,7 @@ namespace Cr.ArgParse
     /// </summary>
     public interface IArgumentParser
     {
-        IParseResult ParseArguments(IEnumerable<string> args);
+        ParseResult ParseArguments(IEnumerable<string> args);
     }
 
     public interface IArgumentActionContainer

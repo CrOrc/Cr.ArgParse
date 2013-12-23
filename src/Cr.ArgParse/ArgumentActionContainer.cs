@@ -18,8 +18,8 @@ namespace Cr.ArgParse
 
         private IList<string> prefixes;
 
-        public ArgumentActionContainer()
-            : this("", new[] {"-", "--", "/"}, "")
+        protected ArgumentActionContainer()
+            : this("", new[] {"-", "--", "/"}, "resolve")
         {
         }
 
@@ -28,6 +28,7 @@ namespace Cr.ArgParse
             Description = description;
             Prefixes = prefixes;
             ConflictHandlerName = conflictHandlerName;
+            //check conflict resolving
             var conflictHandler = GetConflictHandler();
         }
 

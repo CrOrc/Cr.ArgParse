@@ -4,7 +4,7 @@ using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
 {
-    public class ParseResult : IParseResult
+    public class ParseResult
     {
         private readonly IDictionary<string,object> results = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
         public T GetArgument<T>(string argName, T defaultValue = default (T))
