@@ -35,12 +35,23 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Argument.cs" />
+    <Compile Include="ArgumentAction.cs" />
+    <Compile Include="ActionContainer.cs" />
+    <Compile Include="ArgumentGroup.cs" />
+    <Compile Include="CountAction.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="MutuallyExclusiveGroup.cs" />
+    <Compile Include="ValueCount.cs" />
     <Compile Include="ArgumentParser.cs" />
     <Compile Include="IArgumentParser.cs" />
-    <Compile Include="IParseResult.cs" />
+    <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="ParseResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StoreAction.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -39,12 +39,21 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionContainerTest.cs" />
+    <Compile Include="ArgumentActionAsserter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ValueCountTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cr.ArgParse\Cr.ArgParse.csproj">
+      <Project>{12e423b9-5b5a-403a-877b-b4b7f4adb66b}</Project>
+      <Name>Cr.ArgParse</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
