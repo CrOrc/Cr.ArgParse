@@ -15,6 +15,7 @@ namespace Cr.ArgParse
             Argument = argument;
             OptionStrings = new List<string>(Argument.OptionStrings ?? new string[] {});
             Destination = Argument.Destination;
+            IsRequired = Argument.IsRequired;
         }
 
         public string Destination { get; private set; }
