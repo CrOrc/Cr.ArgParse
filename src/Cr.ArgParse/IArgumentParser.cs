@@ -9,9 +9,4 @@ namespace Cr.ArgParse
     {
         ParseResult ParseArguments(IEnumerable<string> args);
     }
-
-    public interface IArgumentActionContainer
-    {
-        ArgumentAction AddArgument(Argument argument);
-    }
 }

@@ -5,11 +5,12 @@ namespace Cr.ArgParse
     public abstract class ArgumentAction
     {
         public Argument Argument { get; private set; }
-        public ArgumentActionContainer Container { get; set; }
+        public ActionContainer Container { get; set; }
 
         public IList<string> OptionStrings { get; private set; }
+        public bool IsRequired { get; set; }
 
-        public ArgumentAction(Argument argument)
+    public ArgumentAction(Argument argument)
         {
             Argument = argument;
             OptionStrings = new List<string>(Argument.OptionStrings ?? new string[] {});

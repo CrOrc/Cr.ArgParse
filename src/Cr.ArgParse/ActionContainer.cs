@@ -6,30 +6,64 @@ using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
 {
-    public class ArgumentActionContainer : IArgumentActionContainer
+    public class ActionContainer : IActionContainer
     {
-        private readonly IDictionary<string, Func<Argument, ArgumentAction>> actionFactories =
-            new Dictionary<string, Func<Argument, ArgumentAction>>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, Func<Argument, ArgumentAction>> actionFactories;
 
-        private readonly IList<ArgumentAction> actions = new List<ArgumentAction>();
+        private readonly IList<ArgumentAction> actions;
 
-        private readonly IDictionary<string, ArgumentAction> optionStringActions =
-            new Dictionary<string, ArgumentAction>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, ArgumentAction> optionStringActions;
 
         private IList<string> prefixes;
 
-        protected ArgumentActionContainer()
+        public ActionContainer()
             : this("", new[] {"-", "--", "/"}, "resolve")
         {
         }
 
-        public ArgumentActionContainer(string description, IList<string> prefixes, string conflictHandlerName)
+        public ActionContainer(string description, IList<string> prefixes, string conflictHandlerName)
         {
             Description = description;
             Prefixes = prefixes;
             ConflictHandlerName = conflictHandlerName;
+
+            DefaultAction = "store";
+            actionFactories =
+                new Dictionary<string, Func<Argument, ArgumentAction>>(StringComparer.InvariantCultureIgnoreCase);
+            RegisterActions(new Dictionary<string, Func<Argument, ArgumentAction>>
+            {
+                {"store", arg => new StoreAction(arg)},
+                {"count", arg => new CountAction(arg)}
+            });
+
             //check conflict resolving
             var conflictHandler = GetConflictHandler();
+
+            actions = new List<ArgumentAction>();
+
+            optionStringActions =
+                new Dictionary<string, ArgumentAction>(StringComparer.InvariantCultureIgnoreCase);
+
+            //groups
+            ActionGroups = new List<ArgumentGroup>();
+            MutuallyExclusiveGroups = new List<MutuallyExclusiveGroup>();
+        }
+
+        public IList<ArgumentGroup> ActionGroups { get; private set; }
+        public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
+
+        public ArgumentGroup AddArgumentGroup(string title, string description)
+        {
+            var group = new ArgumentGroup(this, title, description);
+            ActionGroups.Add(group);
+            return group;
+        }
+
+        public MutuallyExclusiveGroup AddMutuallyExclusiveGroup(bool isRequired = false)
+        {
+            var group = new MutuallyExclusiveGroup(this, isRequired);
+            MutuallyExclusiveGroups.Add(group);
+            return group;
         }
 
         private IDictionary<string, Func<Argument, ArgumentAction>> ActionFactories
@@ -65,9 +99,9 @@ namespace Cr.ArgParse
                         .Distinct()
                         .OrderByDescending(it => it.Length)
                         .ThenBy(it => it)
-                        .ToList();
-                LongPrefixes = prefixes.Where(it => it.Length > 1).ToList();
-                ShortPrefixes = prefixes.Where(it => it.Length == 1).ToList();
+                        .ToArray();
+                LongPrefixes = prefixes.Where(it => it.Length > 1).ToArray();
+                ShortPrefixes = prefixes.Where(it => it.Length == 1).ToArray();
             }
         }
 
@@ -82,10 +116,10 @@ namespace Cr.ArgParse
                 preparedArgument = PreparePositionalArgument(argument);
             else
                 preparedArgument = PrepareOptionalArgument(argument);
-            var argumentAction = CreateArgumentAction(preparedArgument);
+            var argumentAction = CreateAction(preparedArgument);
             if (ReferenceEquals(argumentAction, null))
                 throw new Exception("Unregistered action exception");
-            return AddArgumentAction(argumentAction);
+            return AddAction(argumentAction);
         }
 
         private Action<ArgumentAction, IEnumerable<KeyValuePair<string, ArgumentAction>>> GetConflictHandler()
@@ -132,11 +166,11 @@ namespace Cr.ArgParse
 
                 //if the option now has no option string, remove it from the container holding it
                 if (!kv.Value.OptionStrings.Any())
-                    kv.Value.Container.RemoveArgumentAction(kv.Value);
+                    kv.Value.Container.RemoveAction(kv.Value);
             }
         }
 
-        public virtual ArgumentAction AddArgumentAction(ArgumentAction argumentAction)
+        public virtual ArgumentAction AddAction(ArgumentAction argumentAction)
         {
             if (ReferenceEquals(argumentAction, null))
                 throw new ArgumentNullException("argumentAction");
@@ -150,23 +184,22 @@ namespace Cr.ArgParse
             return argumentAction;
         }
 
-        public virtual void RemoveArgumentAction(ArgumentAction argumentAction)
+        public virtual void RemoveAction(ArgumentAction argumentAction)
         {
             Actions.Remove(argumentAction);
         }
 
-        protected string StripPrefix(string optionString)
+        private string StripPrefix(string optionString)
         {
             if (string.IsNullOrEmpty(optionString))
                 return optionString;
             var localPrefixes = Prefixes;
-            return Enumerable.Where<string>(localPrefixes,
-                prefix => optionString.StartsWith(prefix, true, CultureInfo.InvariantCulture))
+            return localPrefixes.Where(prefix => optionString.StartsWith(prefix, true, CultureInfo.InvariantCulture))
                 .Select(prefix => optionString.Substring(prefix.Length))
                 .FirstOrDefault() ?? optionString;
         }
 
-        private ArgumentAction CreateArgumentAction(Argument argument)
+        private ArgumentAction CreateAction(Argument argument)
         {
             var argumentAction = argument.Action;
             if (argumentAction != null)
@@ -176,7 +209,7 @@ namespace Cr.ArgParse
             return argumentActionFactory != null ? argumentActionFactory(argument) : null;
         }
 
-        protected void RegisterArgumentActions(
+        protected void RegisterActions(
             IEnumerable<KeyValuePair<string, Func<Argument, ArgumentAction>>> newActionFactories)
         {
             foreach (var kv in newActionFactories)
