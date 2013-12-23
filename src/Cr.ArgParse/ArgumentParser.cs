@@ -6,7 +6,7 @@ using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
 {
-    public class ArgumentParser : IArgumentParser
+    public class ArgumentParser : ArgumentActionContainer, IArgumentParser
     {
         public IParseResult ParseArguments(IEnumerable<string> args)
         {

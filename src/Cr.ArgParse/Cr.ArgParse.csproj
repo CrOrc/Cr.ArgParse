@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Argument.cs" />
     <Compile Include="ArgumentAction.cs" />
+    <Compile Include="ArgumentActionContainer.cs" />
     <Compile Include="CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="ValueCount.cs" />
