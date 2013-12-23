@@ -3,6 +3,7 @@
     public abstract class ArgumentAction : IArgumentAction
     {
         public Argument Argument { get; private set; }
+        public ArgumentActionContainer Container { get; set; }
 
         public ArgumentAction(Argument argument)
         {

@@ -7,10 +7,21 @@ namespace Cr.ArgParse
     /// </summary>
     public class Argument
     {
+        private readonly List<string> optionStrings = new List<string>();
+
         /// <summary>
         /// strings to identify argument. Empty for positional arguments.
         /// </summary>
-        public IList<string> OptionStrings { get; set; }
+        public IList<string> OptionStrings
+        {
+            get { return optionStrings; }
+            set
+            {
+                optionStrings.Clear();
+                if (value != null)
+                    optionStrings.AddRange(value);
+            }
+        }
 
         /// <summary>
         /// Name for storing parsing results.
