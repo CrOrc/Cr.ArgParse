@@ -6,9 +6,9 @@
         {
         }
 
-        public override void Call(IArgumentParser parser, ParseResult parseResult, object values, string optionString)
+        public override void Call(ParseResult parseResult, object values, string optionString)
         {
-            parseResult.SaveArgument(Argument.Destination, values);
+            parseResult.SaveArgument(Destination, values);
         }
     }
 }

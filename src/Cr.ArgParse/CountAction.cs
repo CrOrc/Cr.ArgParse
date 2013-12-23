@@ -6,10 +6,10 @@
         {
         }
 
-        public override void Call(IArgumentParser parser, ParseResult parseResult, object values, string optionString)
+        public override void Call(ParseResult parseResult, object values, string optionString)
         {
-            var res = parseResult.GetArgument(Argument.Destination, 0);
-            parseResult.SaveArgument(Argument.Destination, res + 1);
+            var res = parseResult.GetArgument(Destination, 0);
+            parseResult.SaveArgument(Destination, res + 1);
         }
     }
 }

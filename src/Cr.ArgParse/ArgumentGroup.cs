@@ -11,12 +11,12 @@ namespace Cr.ArgParse
 
         public ArgumentActionContainer Container { get; set; }
 
-        public override IList<IArgumentAction> Actions
+        public override IList<ArgumentAction> Actions
         {
             get { return Container.Actions; }
         }
 
-        public override IDictionary<string, IArgumentAction> OptionStringActions
+        public override IDictionary<string, ArgumentAction> OptionStringActions
         {
             get { return Container.OptionStringActions; }
         }

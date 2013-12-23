@@ -12,6 +12,6 @@ namespace Cr.ArgParse
 
     public interface IArgumentActionContainer
     {
-        IArgumentAction AddArgument(Argument argument);
+        ArgumentAction AddArgument(Argument argument);
     }
 }

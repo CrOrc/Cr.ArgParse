@@ -8,13 +8,13 @@ namespace Cr.ArgParse
 {
     public class ArgumentActionContainer : IArgumentActionContainer
     {
-        private readonly IDictionary<string, Func<Argument, IArgumentAction>> actionFactories =
-            new Dictionary<string, Func<Argument, IArgumentAction>>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, Func<Argument, ArgumentAction>> actionFactories =
+            new Dictionary<string, Func<Argument, ArgumentAction>>(StringComparer.InvariantCultureIgnoreCase);
 
-        private readonly IList<IArgumentAction> actions = new List<IArgumentAction>();
+        private readonly IList<ArgumentAction> actions = new List<ArgumentAction>();
 
-        private readonly IDictionary<string, IArgumentAction> optionStringActions =
-            new Dictionary<string, IArgumentAction>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly IDictionary<string, ArgumentAction> optionStringActions =
+            new Dictionary<string, ArgumentAction>(StringComparer.InvariantCultureIgnoreCase);
 
         private IList<string> prefixes;
 
@@ -31,12 +31,12 @@ namespace Cr.ArgParse
             var conflictHandler = GetConflictHandler();
         }
 
-        private IDictionary<string, Func<Argument, IArgumentAction>> ActionFactories
+        private IDictionary<string, Func<Argument, ArgumentAction>> ActionFactories
         {
             get { return actionFactories; }
         }
 
-        public virtual IList<IArgumentAction> Actions
+        public virtual IList<ArgumentAction> Actions
         {
             get { return actions; }
         }
@@ -47,7 +47,7 @@ namespace Cr.ArgParse
 
         public IList<string> LongPrefixes { get; private set; }
 
-        public virtual IDictionary<string, IArgumentAction> OptionStringActions
+        public virtual IDictionary<string, ArgumentAction> OptionStringActions
         {
             get { return optionStringActions; }
         }
@@ -72,7 +72,7 @@ namespace Cr.ArgParse
 
         public IList<string> ShortPrefixes { get; private set; }
 
-        public IArgumentAction AddArgument(Argument argument)
+        public ArgumentAction AddArgument(Argument argument)
         {
             var localPrefixes = Prefixes;
             Argument preparedArgument;
@@ -87,7 +87,7 @@ namespace Cr.ArgParse
             return AddArgumentAction(argumentAction);
         }
 
-        private Action<IArgumentAction, IEnumerable<KeyValuePair<string, IArgumentAction>>> GetConflictHandler()
+        private Action<ArgumentAction, IEnumerable<KeyValuePair<string, ArgumentAction>>> GetConflictHandler()
         {
             if (StringComparer.InvariantCultureIgnoreCase.Equals("error", ConflictHandlerName))
                 return HandleConflictWithError;
@@ -96,22 +96,22 @@ namespace Cr.ArgParse
             throw new Exception(string.Format("Invalid conflict resolution value: {0}", ConflictHandlerName));
         }
 
-        public void CheckConflict(IArgumentAction action)
+        public void CheckConflict(ArgumentAction action)
         {
-            var conflOptionals = new List<KeyValuePair<string, IArgumentAction>>();
-            foreach (var optionString in action.Argument.OptionStrings)
+            var conflOptionals = new List<KeyValuePair<string, ArgumentAction>>();
+            foreach (var optionString in action.OptionStrings)
             {
-                IArgumentAction conflOptional;
+                ArgumentAction conflOptional;
                 if (OptionStringActions.TryGetValue(optionString, out conflOptional))
-                    conflOptionals.Add(new KeyValuePair<string, IArgumentAction>(optionString, conflOptional));
+                    conflOptionals.Add(new KeyValuePair<string, ArgumentAction>(optionString, conflOptional));
             }
             if (!conflOptionals.Any()) return;
             var confictHandler = GetConflictHandler();
             confictHandler(action, conflOptionals);
         }
 
-        private void HandleConflictWithError(IArgumentAction action,
-            IEnumerable<KeyValuePair<string, IArgumentAction>> conflictingActions)
+        private void HandleConflictWithError(ArgumentAction action,
+            IEnumerable<KeyValuePair<string, ArgumentAction>> conflictingActions)
         {
             var conflictionOptions = conflictingActions.Select(it => it.Key).ToList();
             var conflictString = string.Join(", ", conflictionOptions);
@@ -120,22 +120,22 @@ namespace Cr.ArgParse
             throw new Exception(string.Format("Confliction option strings: {0}", conflictString));
         }
 
-        private void HandleConflictWithResolve(IArgumentAction action,
-            IEnumerable<KeyValuePair<string, IArgumentAction>> conflictingActions)
+        private void HandleConflictWithResolve(ArgumentAction action,
+            IEnumerable<KeyValuePair<string, ArgumentAction>> conflictingActions)
         {
             //remove all conflicting options
             foreach (var kv in conflictingActions)
             {
-                kv.Value.Argument.OptionStrings.Remove(kv.Key);
+                kv.Value.OptionStrings.Remove(kv.Key);
                 OptionStringActions.Remove(kv.Key);
 
                 //if the option now has no option string, remove it from the container holding it
-                if (!kv.Value.Argument.OptionStrings.Any())
+                if (!kv.Value.OptionStrings.Any())
                     kv.Value.Container.RemoveArgumentAction(kv.Value);
             }
         }
 
-        public virtual IArgumentAction AddArgumentAction(IArgumentAction argumentAction)
+        public virtual ArgumentAction AddArgumentAction(ArgumentAction argumentAction)
         {
             if (ReferenceEquals(argumentAction, null))
                 throw new ArgumentNullException("argumentAction");
@@ -144,13 +144,12 @@ namespace Cr.ArgParse
             Actions.Add(argumentAction);
             argumentAction.Container = this;
 
-            var optionStrings = argumentAction.Argument.OptionStrings ?? new string[] {};
-            foreach (var optionString in optionStrings)
+            foreach (var optionString in argumentAction.OptionStrings)
                 OptionStringActions[optionString] = argumentAction;
             return argumentAction;
         }
 
-        public virtual void RemoveArgumentAction(IArgumentAction argumentAction)
+        public virtual void RemoveArgumentAction(ArgumentAction argumentAction)
         {
             Actions.Remove(argumentAction);
         }
@@ -166,7 +165,7 @@ namespace Cr.ArgParse
                 .FirstOrDefault() ?? optionString;
         }
 
-        private IArgumentAction CreateArgumentAction(Argument argument)
+        private ArgumentAction CreateArgumentAction(Argument argument)
         {
             var argumentAction = argument.Action;
             if (argumentAction != null)
@@ -177,7 +176,7 @@ namespace Cr.ArgParse
         }
 
         protected void RegisterArgumentActions(
-            IEnumerable<KeyValuePair<string, Func<Argument, IArgumentAction>>> newActionFactories)
+            IEnumerable<KeyValuePair<string, Func<Argument, ArgumentAction>>> newActionFactories)
         {
             foreach (var kv in newActionFactories)
                 ActionFactories[kv.Key] = kv.Value;

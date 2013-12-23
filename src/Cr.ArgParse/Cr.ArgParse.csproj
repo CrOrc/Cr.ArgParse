@@ -43,7 +43,6 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="ArgumentParser.cs" />
-    <Compile Include="IArgumentAction.cs" />
     <Compile Include="IArgumentParser.cs" />
     <Compile Include="IParseResult.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />

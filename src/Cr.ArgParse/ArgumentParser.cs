@@ -13,7 +13,7 @@ namespace Cr.ArgParse
         public ArgumentParser()
         {
             Prefixes = new[] {"-", "--", "/"};
-            RegisterArgumentActions(new Dictionary<string, Func<Argument, IArgumentAction>>
+            RegisterArgumentActions(new Dictionary<string, Func<Argument, ArgumentAction>>
             {
                 {"store", arg => new StoreAction(arg)},
                 {"count", arg => new CountAction(arg)}

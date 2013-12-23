@@ -42,7 +42,7 @@ namespace Cr.ArgParse
         /// <summary>
         /// Custom action to be performed on argument. If present <see cref="ActionName"/> will be ignored.
         /// </summary>
-        public IArgumentAction Action { get; set; }
+        public ArgumentAction Action { get; set; }
 
         /// <summary>
         /// Count of values for this argument.
