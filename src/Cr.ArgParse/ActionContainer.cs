@@ -37,7 +37,7 @@ namespace Cr.ArgParse
             });
 
             //check conflict resolving
-            var conflictHandler = GetConflictHandler();
+            GetConflictHandler();
 
             actions = new List<ArgumentAction>();
 
@@ -201,11 +201,10 @@ namespace Cr.ArgParse
 
         private ArgumentAction CreateAction(Argument argument)
         {
-            var argumentAction = argument.Action;
-            if (argumentAction != null)
-                return argumentAction;
-            var argumentActionFactory = ActionFactories.SafeGetValue(argument.ActionName) ??
-                                        ActionFactories.SafeGetValue(DefaultAction);
+            var argumentActionFactory = argument.ActionFactory ??
+                                        ActionFactories.SafeGetValue(!string.IsNullOrWhiteSpace(argument.ActionName)
+                                            ? argument.ActionName
+                                            : DefaultAction);
             return argumentActionFactory != null ? argumentActionFactory(argument) : null;
         }
 
@@ -252,7 +251,7 @@ namespace Cr.ArgParse
                     StripPrefix(longOptionStrings.FirstOrDefault() ?? res.OptionStrings.FirstOrDefault());
             }
             if (string.IsNullOrWhiteSpace(res.Destination))
-                throw new Exception("Destination should be specified for options like " + argument.OptionStrings[0]);
+                throw new Exception("Destination should be specified for options like " + res.OptionStrings[0]);
             return res;
         }
     }

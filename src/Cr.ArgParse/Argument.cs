@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cr.ArgParse
 {
@@ -14,7 +15,7 @@ namespace Cr.ArgParse
             Destination = argument.Destination;
             HelpText = argument.HelpText;
             ActionName = argument.ActionName;
-            Action = argument.Action;
+            ActionFactory = argument.ActionFactory;
             ValueCount = argument.ValueCount;
             IsRequired = argument.IsRequired;
             DefaultValue = argument.DefaultValue;
@@ -45,7 +46,7 @@ namespace Cr.ArgParse
         /// <summary>
         /// Custom action to be performed on argument. If present <see cref="ActionName"/> will be ignored.
         /// </summary>
-        public ArgumentAction Action { get; set; }
+        public Func<Argument, ArgumentAction> ActionFactory { get; set; }
 
         /// <summary>
         /// Count of values for this argument.
