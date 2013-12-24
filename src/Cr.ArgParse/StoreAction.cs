@@ -8,7 +8,7 @@
 
         public override void Call(ParseResult parseResult, object values, string optionString)
         {
-            parseResult.SaveArgument(Destination, values);
+            parseResult[Destination] = values;
         }
     }
 }

@@ -9,18 +9,58 @@ namespace Cr.ArgParse.Tests
     {
         [Test] public void AddResults()
         {
-            var parseResult = new ParseResult();
-            parseResult["res1"] = 1;
-            parseResult["res2"] = 2;
-            parseResult["res3"] = new[]{"a","b","c"};
-            parseResult["res4"] = "4";
-            Assert.That(parseResult.ToDictionary(), new BaseSmartEqualityConstraint(new Dictionary<string,object>(StringComparer.InvariantCultureIgnoreCase)
+            var parseResult = new ParseResult
             {
-                {"res1",1},
-                {"res2",2},
-                {"res3",new[]{"a","b","c", "d"}},
-                {"res4","4"}
-            }));
+                {"res1", 1},
+                {"res2", 2},
+                {"res3", new[] {"a", "b", "c"}},
+                {"res4", "4"}
+            };
+            Assert.That(parseResult.ToDictionary(),
+                new BaseSmartEqualityConstraint(new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
+                {
+                    {"res1", 1},
+                    {"res2", 2},
+                    {"res3", new[] {"a", "b", "c"}},
+                    {"res4", "4"}
+                }));
+        }
+
+        [Test] public void AddResultsNested()
+        {
+            var parseResult = new ParseResult
+            {
+                {"res1", 1},
+                {"res2", 2},
+                {"res3", new[] {"a", "b", "c"}},
+                {"res4", "4"},
+                {
+                    "res5",
+                    new ParseResult
+                    {
+                        {"res1", 5},
+                        {"res2", 6},
+                        {"res3", "7"}
+                    }
+                }
+            };
+            Assert.That(parseResult.ToDictionary(),
+                new BaseSmartEqualityConstraint(new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
+                {
+                    {"res1", 1},
+                    {"res2", 2},
+                    {"res3", new[] {"a", "b", "c"}},
+                    {"res4", "4"},
+                    {
+                        "res5",
+                        new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
+                        {
+                            {"res1", 5},
+                            {"res2", 6},
+                            {"res3", "7"}
+                        }
+                    }
+                }));
         }
     }
 }

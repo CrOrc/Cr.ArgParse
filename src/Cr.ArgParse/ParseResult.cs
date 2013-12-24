@@ -1,12 +1,22 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
 {
-    public class ParseResult
+    public class ParseResult : IEnumerable
     {
-        private readonly IDictionary<string,object> results = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase);
+        private IEqualityComparer<string> EqualityComparer { get; set; }
+        private readonly IDictionary<string, object> results;
+
+        public ParseResult(IEqualityComparer<string> equalityComparer = null)
+        {
+            EqualityComparer = equalityComparer ?? StringComparer.InvariantCultureIgnoreCase;
+            results = new Dictionary<string, object>(EqualityComparer);
+        }
+
         public T GetArgument<T>(string argName, T defaultValue = default (T))
         {
             try
@@ -21,9 +31,36 @@ namespace Cr.ArgParse
             return defaultValue;
         }
 
-        public void SaveArgument(string optionString, object values)
+        public object this[string s]
         {
-            results[optionString] = values;
+            get { return results.SafeGetValue(s); }
+            set
+            {
+                if (s == null)
+                    throw new ArgumentNullException("s");
+                results[s] = value;
+            }
+        }
+
+        public void Add(string key, object value)
+        {
+            this[key] = value;
+        }
+
+        public void Clear()
+        {
+            results.Clear();
+        }
+
+        public IDictionary<string, object> ToDictionary()
+        {
+            return results.ToDictionary(kv => kv.Key,
+                kv => kv.Value is ParseResult ? (kv.Value as ParseResult).ToDictionary() : kv.Value, EqualityComparer);
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return results.GetEnumerator();
         }
     }
 }
