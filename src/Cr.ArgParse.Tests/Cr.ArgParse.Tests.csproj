@@ -41,6 +41,17 @@
   <ItemGroup>
     <Compile Include="ActionContainerTest.cs" />
     <Compile Include="ArgumentActionAsserter.cs" />
+    <Compile Include="Assertions\BaseSmartEqualityConstraint.cs" />
+    <Compile Include="Assertions\FailMessage.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FailMessage.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Assertions\FailStrategy.cs" />
+    <Compile Include="Assertions\IFailStrategy.cs" />
+    <Compile Include="Assertions\ObjectExtensions.cs" />
+    <Compile Include="Assertions\TypeExtensions.cs" />
+    <Compile Include="ParseResultTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueCountTest.cs" />
   </ItemGroup>
@@ -55,6 +66,13 @@
       <Name>Cr.ArgParse</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assertions\FailMessage.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FailMessage.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
