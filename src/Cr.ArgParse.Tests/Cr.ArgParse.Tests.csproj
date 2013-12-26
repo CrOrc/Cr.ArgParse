@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionContainerTest.cs" />
-    <Compile Include="ArgumentActionAsserter.cs" />
+    <Compile Include="Asserter.cs" />
     <Compile Include="Assertions\BaseSmartEqualityConstraint.cs" />
     <Compile Include="Assertions\FailMessage.Designer.cs">
       <AutoGen>True</AutoGen>

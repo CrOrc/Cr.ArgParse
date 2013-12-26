@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cr.ArgParse.Extensions
 {
-    internal static class DictionaryExtensions
+    public static class DictionaryExtensions
     {
         public static bool SafeContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {

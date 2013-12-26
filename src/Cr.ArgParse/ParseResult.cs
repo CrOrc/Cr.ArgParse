@@ -8,7 +8,7 @@ namespace Cr.ArgParse
 {
     public class ParseResult : IEnumerable
     {
-        private IEqualityComparer<string> EqualityComparer { get; set; }
+        public IEqualityComparer<string> EqualityComparer { get; private set; }
         private readonly IDictionary<string, object> results;
 
         public IList<string> UnrecognizedArguments { get; set; }

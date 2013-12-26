@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests
 {
-    [TestFixture] public class ParseResultTest
+    [TestFixture] public class ParseResultTest : BaseTest
     {
         [Test] public void AddResults()
         {
@@ -44,6 +44,7 @@ namespace Cr.ArgParse.Tests
                     }
                 }
             };
+
             Assert.That(parseResult.ToDictionary(),
                 new BaseSmartEqualityConstraint(new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
                 {

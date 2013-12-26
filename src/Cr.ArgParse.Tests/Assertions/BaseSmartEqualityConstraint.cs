@@ -96,17 +96,32 @@ namespace Cr.ArgParse.Tests.Assertions
                     else
                     {
                         var genericIDictionaryType =
-                            Enumerable.FirstOrDefault(objectType.GetInterfaces(), it =>
+                            objectType.GetInterfaces().FirstOrDefault(it =>
                                 it.IsGenericType && it.GetGenericTypeDefinition() == typeof (IDictionary<,>));
                         if (!ReferenceEquals(genericIDictionaryType, null))
                         {
                             var genericArgs = genericIDictionaryType.GetGenericArguments();
                             var genericIDictionaryMethod =
-                                Enumerable.FirstOrDefault(
-                                    typeof (BaseSmartEqualityConstraint).GetMethods(BindingFlags.Instance |
-                                                                                    BindingFlags.NonPublic), it =>
-                                                                                        it.Name == "AreEqual" &&
-                                                                                        it.IsGenericMethodDefinition);
+                                typeof (BaseSmartEqualityConstraint)
+                                    .GetMethods(BindingFlags.Instance | BindingFlags.NonPublic)
+                                    .Where(it => it.Name == "AreEqual" && it.IsGenericMethodDefinition)
+                                    .Where(
+                                        it =>
+                                        {
+                                            var pis =
+                                                it.GetParameters();
+                                            return it.GetGenericArguments().Length == 2 &&
+                                                   pis.Length == 2
+                                                   && pis[0].ParameterType.IsGenericType
+                                                   &&
+                                                   pis[0].ParameterType.GetGenericTypeDefinition() ==
+                                                   typeof (IDictionary<,>)
+                                                   && pis[1].ParameterType.IsGenericType
+                                                   &&
+                                                   pis[1].ParameterType.GetGenericTypeDefinition() ==
+                                                   typeof (IDictionary<,>);
+                                        })
+                                    .FirstOrDefault();
                             if (!ReferenceEquals(genericIDictionaryMethod, null))
                             {
                                 var method = genericIDictionaryMethod.MakeGenericMethod(genericArgs);
@@ -216,6 +231,7 @@ namespace Cr.ArgParse.Tests.Assertions
                 }
             }
         }
+
 
         protected void AreEqual(IEnumerable enumerable1, IEnumerable enumerable2)
         {

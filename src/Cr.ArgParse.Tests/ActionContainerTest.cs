@@ -2,11 +2,18 @@ using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests
 {
+    public class BaseTest
+    {
+        protected Asserter Asserter
+        {
+            get{return new Asserter();}
+        }
+    }
     [TestFixture] public class ActionContainerTest
     {
-        private ArgumentActionAsserter ArgumentActionAsserter
+        private Asserter Asserter
         {
-            get { return new ArgumentActionAsserter(); }
+            get { return new Asserter(); }
         }
 
         [Test] public void CreateDefault()
@@ -23,7 +30,7 @@ namespace Cr.ArgParse.Tests
             CollectionAssert.AreEquivalent(new[] {"-e", "--example"}, actionContainer.OptionStringActions.Keys);
 
             Assert.That(res, Is.InstanceOf<StoreAction>());
-            ArgumentActionAsserter.AreEqual(
+            Asserter.AreEqual(
                 new StoreAction(new Argument {OptionStrings = new[] {"-e", "--example"}, Destination = "example"})
                 {
                     Container = actionContainer,
@@ -47,7 +54,7 @@ namespace Cr.ArgParse.Tests
             CollectionAssert.AreEquivalent(new[] {"-e", "--example"}, argument.OptionStrings);
 
             Assert.That(res, Is.InstanceOf<CountAction>());
-            ArgumentActionAsserter.AreEqual(
+            Asserter.AreEqual(
                 new CountAction(argumentCopy)
                 {
                     Container = actionContainer,
