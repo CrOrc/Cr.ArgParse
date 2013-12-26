@@ -7,6 +7,6 @@ namespace Cr.ArgParse
     /// </summary>
     public interface IArgumentParser
     {
-        ParseResult ParseArguments(IEnumerable<string> args);
+        ParseResult ParseArguments(IEnumerable<string> args, ParseResult parseResult = null);
     }
 }

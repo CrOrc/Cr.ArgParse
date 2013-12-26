@@ -43,7 +43,7 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
     <Compile Include="ValueCount.cs" />
-    <Compile Include="ArgumentParser.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="IArgumentParser.cs" />
     <Compile Include="Extensions\ListExtensions.cs" />
     <Compile Include="ParseResult.cs" />

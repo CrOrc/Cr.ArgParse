@@ -2,20 +2,8 @@ using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests
 {
-    public class BaseTest
+    [TestFixture] public class ActionContainerTest:BaseTest
     {
-        protected Asserter Asserter
-        {
-            get{return new Asserter();}
-        }
-    }
-    [TestFixture] public class ActionContainerTest
-    {
-        private Asserter Asserter
-        {
-            get { return new Asserter(); }
-        }
-
         [Test] public void CreateDefault()
         {
             var actionContainer = new ActionContainer();

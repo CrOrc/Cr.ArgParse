@@ -51,7 +51,9 @@
     <Compile Include="Assertions\IFailStrategy.cs" />
     <Compile Include="Assertions\ObjectExtensions.cs" />
     <Compile Include="Assertions\TypeExtensions.cs" />
+    <Compile Include="BaseTest.cs" />
     <Compile Include="ParseResultTest.cs" />
+    <Compile Include="ParserTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ValueCountTest.cs" />
   </ItemGroup>
