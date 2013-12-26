@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cr.ArgParse.Extensions
 {
-    public static class DictionaryExtensions
+    internal static class DictionaryExtensions
     {
         public static bool SafeContainsKey<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
@@ -22,6 +22,18 @@ namespace Cr.ArgParse.Extensions
                    !(fallbackToDefaultPredicate != null && fallbackToDefaultPredicate(ret))
                 ? ret
                 : defaultValue;
+        }
+
+        public static TValue SafeGetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key,
+            Func<TValue> defaultValueFactory,
+            Func<TValue, bool> fallbackToDefaultPredicate = null)
+        {
+            if (dictionary == null || Equals(key, null)) return defaultValueFactory();
+            TValue ret;
+            return dictionary.TryGetValue(key, out ret) &&
+                   !(fallbackToDefaultPredicate != null && fallbackToDefaultPredicate(ret))
+                ? ret
+                : defaultValueFactory();
         }
 
         public static IDictionary<TKey, TValue> ToDictionary<TKey, TValue>(

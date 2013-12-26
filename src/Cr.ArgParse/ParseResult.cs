@@ -11,6 +11,8 @@ namespace Cr.ArgParse
         private IEqualityComparer<string> EqualityComparer { get; set; }
         private readonly IDictionary<string, object> results;
 
+        public IList<string> UnrecognizedArguments { get; set; }
+
         public ParseResult(IEqualityComparer<string> equalityComparer = null)
         {
             EqualityComparer = equalityComparer ?? StringComparer.InvariantCultureIgnoreCase;
@@ -30,6 +32,21 @@ namespace Cr.ArgParse
             }
             return defaultValue;
         }
+
+        public T GetArgument<T>(string argName, Func<T> defaultValueFactory)
+        {
+            try
+            {
+                var res = results.SafeGetValue(argName,defaultValueFactory);
+                if (res is T)
+                    return (T)res;
+            }
+            catch
+            {
+            }
+            return defaultValueFactory();
+        }
+
 
         public object this[string s]
         {
