@@ -68,5 +68,10 @@ namespace Cr.ArgParse
         /// </summary>
         public object ConstValue { get; set; }
 
+
+        /// <summary>
+        /// Argument to show in help / errors
+        /// </summary>
+        public string MetaVariable { get; set; }
     }
 }

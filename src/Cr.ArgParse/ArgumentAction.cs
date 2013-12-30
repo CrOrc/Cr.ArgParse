@@ -19,6 +19,8 @@ namespace Cr.ArgParse
         }
 
         public string Destination { get; private set; }
+        public object DefaultValue { get { return Argument.DefaultValue; } }
+        public string MetaVariable { get { return Argument.MetaVariable; }}
 
         public abstract void Call(ParseResult parseResult, object values, string optionString);
     }

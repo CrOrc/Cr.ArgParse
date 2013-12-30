@@ -38,6 +38,7 @@
     <Compile Include="Argument.cs" />
     <Compile Include="ArgumentAction.cs" />
     <Compile Include="ActionContainer.cs" />
+    <Compile Include="ArgumentError.cs" />
     <Compile Include="ArgumentGroup.cs" />
     <Compile Include="CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
