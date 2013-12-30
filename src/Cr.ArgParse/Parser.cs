@@ -13,6 +13,11 @@ namespace Cr.ArgParse
         {
         }
 
+        public Parser()
+            : this("", new[] {"-", "--", "/"}, "resolve")
+        {
+        }
+
         public ParseResult ParseArguments(IEnumerable<string> args, ParseResult parseResult = null)
         {
             if (parseResult == null)
@@ -32,11 +37,11 @@ namespace Cr.ArgParse
             }
 
             //parse the arguments and exit if there are any errors
-            parseResult = ParseKnownArgs(args, parseResult);
+            parseResult = ParseKnowValueCount(args, parseResult);
             return parseResult;
         }
 
-        private ParseResult ParseKnownArgs(IEnumerable<string> args, ParseResult parseResult)
+        private ParseResult ParseKnowValueCount(IEnumerable<string> args, ParseResult parseResult)
         {
             var argStrings = args.ToList();
             //map all mutually exclusive arguments to the other arguments they can't occur with
@@ -113,6 +118,14 @@ namespace Cr.ArgParse
                     if (argumentValues != null)
                         action.Call(parseResult, argumentValues, optionString);
                 };
+            Func<int, int> consumeOptional =
+                startIndex => { return startIndex; };
+
+            var positionals = GetPositionalActions();
+
+            Func<int, int> consumePositionals =
+                startIndex => { return startIndex; };
+
             return parseResult;
         }
 
@@ -127,7 +140,86 @@ namespace Cr.ArgParse
 
         private object GetValues(ArgumentAction action, IEnumerable<string> argumentStrings)
         {
-            return null;
+            object value = null;
+            var argStrings = (argumentStrings ?? new string[] {}).ToList();
+            if (argumentStrings != null)
+                if (action.IsParser || action.IsRemainder)
+                {
+                    argStrings.Remove("--");
+                    argumentStrings = argStrings;
+                }
+            //optional argument produces a default when not present
+            if ((argumentStrings == null || !argumentStrings.Any()) && action.IsOptional)
+            {
+                value = action.OptionStrings.Any() ? action.ConstValue : action.DefaultValue;
+                var strValue = value as string;
+                if (strValue != null)
+                {
+                    value = GetValue(action, strValue);
+                    CheckValue(action, value);
+                }
+            }
+                //when ValueCount='0,n' on a positional, if there were no command-line args, use the default if it is anything other than null
+            else if ((argumentStrings == null || !argumentStrings.Any()) && !action.OptionStrings.Any() &&
+                     action.ValueCount != null &&
+                     action.ValueCount.Min == 0 && action.ValueCount.Max > 0)
+            {
+                value = action.DefaultValue ?? argumentStrings;
+                CheckValue(action, value);
+            }
+                // single argument or optional argument produces a single value
+            else if (argStrings.Count == 1 && (action.ValueCount == null || action.IsOptional))
+            {
+                value = GetValue(action, argStrings[0]);
+                CheckValue(action, value);
+            }
+                // REMAINDER arguments convert all values, checking none
+            else if (action.IsRemainder)
+                value = argStrings.Select(it => GetValue(action, it)).ToList();
+            else if (action.IsParser)
+            {
+                var convertedValues = argStrings.Select(it => GetValue(action, it)).ToList();
+                value = convertedValues;
+                CheckValue(action, value);
+            }
+                // all other types of ValueCount produce a list
+            else
+            {
+                var convertedValues = argStrings.Select(it => GetValue(action, it)).ToList();
+                value = convertedValues;
+                foreach (var convertedValue in convertedValues)
+                    CheckValue(action, convertedValue);
+            }
+
+            // return the converted value
+            return value;
+        }
+
+        private Func<string, object> GetTypeFactory(string typeName)
+        {
+            if (StringComparer.InvariantCultureIgnoreCase.Equals(typeName, "int"))
+                return argString => int.Parse(argString);
+            return argString => argString;
+        }
+
+        private object GetValue(ArgumentAction action, string argString)
+        {
+            var typeFactory = GetTypeFactory(action.Type);
+            try
+            {
+                return typeFactory(argString);
+            }
+            catch (Exception err)
+            {
+                //TODO: Add err as inner exception
+                throw new ArgumentError(action,
+                    string.Format("Invalid type \"{0}\" for value \"{1}\"", action.Type, argString));
+            }
+        }
+
+        private void CheckValue(ArgumentAction action, object value)
+        {
+            //TODO: implement validation parsing result
         }
 
         private OptionTuple ParseOptional(string argString)
@@ -138,13 +230,8 @@ namespace Cr.ArgParse
         private class OptionTuple
         {
             public ArgumentAction Action { get; set; }
-            public string OptionString { get; set; }
             public object ExplicitArgument { get; set; }
-        }
-
-        public Parser()
-            : this("", new[] {"-", "--", "/"}, "resolve")
-        {
+            public string OptionString { get; set; }
         }
     }
 }

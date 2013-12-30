@@ -19,8 +19,39 @@ namespace Cr.ArgParse
         }
 
         public string Destination { get; private set; }
-        public object DefaultValue { get { return Argument.DefaultValue; } }
-        public string MetaVariable { get { return Argument.MetaVariable; }}
+
+        public object DefaultValue
+        {
+            get { return Argument.DefaultValue; }
+        }
+
+        public object ConstValue
+        {
+            get { return Argument.ConstValue; }
+        }
+
+        public string MetaVariable
+        {
+            get { return Argument.MetaVariable; }
+        }
+
+        public ValueCount ValueCount
+        {
+            get { return Argument.ValueCount; }
+        }
+
+        public string Type
+        {
+            get { return Argument.Type; }
+        }
+
+        public bool IsOptional
+        {
+            get { return ValueCount != null && ValueCount.Min == 0 && ValueCount.Max == 1; }
+        }
+
+        public bool IsParser { get; set; }
+        public bool IsRemainder { get; set; }
 
         public abstract void Call(ParseResult parseResult, object values, string optionString);
     }

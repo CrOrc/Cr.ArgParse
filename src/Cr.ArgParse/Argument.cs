@@ -20,6 +20,8 @@ namespace Cr.ArgParse
             IsRequired = argument.IsRequired;
             DefaultValue = argument.DefaultValue;
             ConstValue = argument.ConstValue;
+            MetaVariable = argument.MetaVariable;
+            Type = argument.Type;
         }
 
         /// <summary>
@@ -73,5 +75,11 @@ namespace Cr.ArgParse
         /// Argument to show in help / errors
         /// </summary>
         public string MetaVariable { get; set; }
+
+
+        /// <summary>
+        /// Name argument type
+        /// </summary>
+        public string Type { get; set; }
     }
 }

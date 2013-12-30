@@ -254,5 +254,15 @@ namespace Cr.ArgParse
                 throw new Exception("Destination should be specified for options like " + res.OptionStrings[0]);
             return res;
         }
+
+        protected List<ArgumentAction> GetOptionalActions()
+        {
+            return Actions.Where(it => it.OptionStrings.Any()).ToList();
+        }
+
+        protected List<ArgumentAction> GetPositionalActions()
+        {
+            return Actions.Where(it => !it.OptionStrings.Any()).ToList();
+        }
     }
 }
