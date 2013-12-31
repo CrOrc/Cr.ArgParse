@@ -97,6 +97,7 @@ namespace Cr.ArgParse
 
             var seenActions = new HashSet<ArgumentAction>();
             var seenNonDefaultActions = new HashSet<ArgumentAction>();
+            var extras = new List<string>();
             Action<ArgumentAction, IEnumerable<string>, string> takeAction =
                 (action, argumentStrings, optionString) =>
                 {
@@ -126,7 +127,95 @@ namespace Cr.ArgParse
                     var action = optionTuple.Action;
                     var optionString = optionTuple.OptionString;
                     var explicitArg = optionTuple.ExplicitArgument;
-                    return startIndex;
+                    var stopIndex = startIndex;
+
+                    // identify additional optionals in the same arg string
+                    // (e.g. -xyz is the same as -x -y -z if no args are required)
+                    var actionTuples = new List<ActionTuple>();
+                    while (true)
+                    {
+                        //if we found no optional action, skip it
+                        if (action == null)
+                        {
+                            extras.Add(argStrings[startIndex]);
+                            return startIndex + 1;
+                        }
+                        if (explicitArg != null)
+                        {
+                            var argCount = MatchArgument(action, "A");
+                            //if the action is a single-dash option and takes no
+                            // arguments, try to parse more single-dash options out
+                            // of the tail of the option string
+                            if (argCount == 0 && optionString.StartsWith(ShortPrefixes) &&
+                                !optionString.StartsWith(LongPrefixes))
+                            {
+                                actionTuples.Add(new ActionTuple
+                                {
+                                    Action = action,
+                                    Arguments = new string[] {},
+                                    OptionString = optionString
+                                });
+                                var prefix = optionString.Substring(0, 1);
+                                optionString = prefix + explicitArg[0];
+                                var newExplicitArg = explicitArg.Length > 1 ? explicitArg.Substring(1) : null;
+                                var newAction = OptionStringActions.SafeGetValue(optionString);
+                                if (newAction != null)
+                                {
+                                    action = newAction;
+                                    explicitArg = newExplicitArg;
+                                }
+                                else
+                                {
+                                    throw new ArgumentError(action,
+                                        string.Format("Ignored explicit argument {0}", explicitArg));
+                                }
+                            }
+                                // if the action expect exactly one argument, we've
+                                // successfully matched the option; exit the loop
+                            else if (argCount == 1)
+                            {
+                                stopIndex = startIndex + 1;
+                                actionTuples.Add(new ActionTuple
+                                {
+                                    Action = action,
+                                    Arguments = new[] {explicitArg},
+                                    OptionString = optionString
+                                });
+                                break;
+                            }
+                                // error if a double-dash option did not use the explicit argument
+                            else
+                            {
+                                throw new ArgumentError(action,
+                                    string.Format("Ignored explicit argument {0}", explicitArg));
+                            }
+                        }
+                            // if there is no explicit argument, try to match the
+                            // optional's string arguments with the following strings
+                            // if successful, exit the loop
+                        else
+                        {
+                            var start = startIndex + 1;
+                            var selectedPatterns = argStringPattern.Substring(start);
+                            var argCount = MatchArgument(action, selectedPatterns);
+                            stopIndex = start + argCount;
+                            actionTuples.Add(new ActionTuple
+                            {
+                                Action = action,
+                                Arguments = argStrings.Skip(start).Take(argCount).ToList(),
+                                OptionString = optionString
+                            });
+                            break;
+                        }
+                    }
+                    // add the Optional to the list and return the index at which
+                    // the Optional's string args stopped
+
+                    if(!actionTuples.Any())
+                        throw new Exception("should be at least on action");
+                    foreach (var actionTuple in actionTuples)
+                        takeAction(actionTuple.Action, actionTuple.Arguments, actionTuple.OptionString);
+                    return stopIndex;
                 };
 
             var positionals = GetPositionalActions();
@@ -135,6 +224,13 @@ namespace Cr.ArgParse
                 startIndex => { return startIndex; };
 
             return parseResult;
+        }
+
+        private class ActionTuple
+        {
+            public ArgumentAction Action { get; set; }
+            public IList<string> Arguments { get; set; }
+            public string OptionString { get; set; }
         }
 
         private static string GetActionName(ArgumentAction action)
@@ -232,9 +328,9 @@ namespace Cr.ArgParse
 
         private int MatchArgument(ArgumentAction action, string argStringsPattern)
         {
-            var valueCountPattern = GetValueCountPattern(action);
             try
             {
+                var valueCountPattern = "^"+GetValueCountPattern(action);
                 var match = Regex.Match(argStringsPattern, valueCountPattern);
                 return match.Groups[1].Value.Length;
             }
@@ -244,12 +340,26 @@ namespace Cr.ArgParse
             }
         }
 
+        private IList<int> MatchArgumentsPartial(IList<ArgumentAction> actions, string argStringsPattern)
+        {
+            var res = new List<int>();
+            for (var i = actions.Count; i > 0; --i)
+            {
+                var actionsSlice = actions.Take(i);
+                var pattern = "^"+string.Concat(actionsSlice.Select(GetValueCountPattern));
+                var match=Regex.Match(argStringsPattern, pattern);
+                if (!match.Success) continue;
+                res.AddRange(match.Groups.OfType<Group>().Select(it=>it.Length));
+                break;
+            }
+            return res;
+        }
+
         private static string GetValueCountPattern(ArgumentAction action)
         {
-            string res;
-            res = action.IsRemainder
-                ? "^([-AO]*)"
-                : (action.IsParser ? "^(-*A[-AO]*)" : string.Format("^(-*(?:A-*){0})", action.ValueCount));
+            var res = action.IsRemainder
+                ? "([-AO]*)"
+                : (action.IsParser ? "(-*A[-AO]*)" : string.Format("(-*(?:A-*){0})", action.ValueCount));
             if (action.OptionStrings.Any())
                 res = res.Replace("-*", "").Replace("-", "");
             return res;
@@ -263,7 +373,7 @@ namespace Cr.ArgParse
         private class OptionTuple
         {
             public ArgumentAction Action { get; set; }
-            public object ExplicitArgument { get; set; }
+            public string ExplicitArgument { get; set; }
             public string OptionString { get; set; }
         }
     }
