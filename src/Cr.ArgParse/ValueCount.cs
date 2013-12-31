@@ -91,6 +91,11 @@ namespace Cr.ArgParse
             }
             if (Max.HasValue && !Min.HasValue)
                 Min = 0;
+            if (!Max.HasValue || !Min.HasValue) return;
+            var min = Min < Max ? Min : Max;
+            var max = Min > Max ? Min : Max;
+            Min = min;
+            Max = max;
         }
 
         private static uint? ToNullable(int n)

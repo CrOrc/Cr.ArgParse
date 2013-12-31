@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
@@ -119,7 +120,14 @@ namespace Cr.ArgParse
                         action.Call(parseResult, argumentValues, optionString);
                 };
             Func<int, int> consumeOptional =
-                startIndex => { return startIndex; };
+                startIndex =>
+                {
+                    var optionTuple = optionStringIndices.SafeGetValue(startIndex);
+                    var action = optionTuple.Action;
+                    var optionString = optionTuple.OptionString;
+                    var explicitArg = optionTuple.ExplicitArgument;
+                    return startIndex;
+                };
 
             var positionals = GetPositionalActions();
 
@@ -220,6 +228,31 @@ namespace Cr.ArgParse
         private void CheckValue(ArgumentAction action, object value)
         {
             //TODO: implement validation parsing result
+        }
+
+        private int MatchArgument(ArgumentAction action, string argStringsPattern)
+        {
+            var valueCountPattern = GetValueCountPattern(action);
+            try
+            {
+                var match = Regex.Match(argStringsPattern, valueCountPattern);
+                return match.Groups[1].Value.Length;
+            }
+            catch
+            {
+                return 0;
+            }
+        }
+
+        private static string GetValueCountPattern(ArgumentAction action)
+        {
+            string res;
+            res = action.IsRemainder
+                ? "^([-AO]*)"
+                : (action.IsParser ? "^(-*A[-AO]*)" : string.Format("^(-*(?:A-*){0})", action.ValueCount));
+            if (action.OptionStrings.Any())
+                res = res.Replace("-*", "").Replace("-", "");
+            return res;
         }
 
         private OptionTuple ParseOptional(string argString)

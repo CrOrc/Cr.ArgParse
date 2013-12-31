@@ -161,6 +161,18 @@ namespace Cr.ArgParse.Tests
             Assert.AreEqual("{10,30}", valueCount.OriginalString);
         }
 
+        [Test]
+        public void TwoArgConstructorUintInversedOrder()
+        {
+            var value1 = (uint?)10;
+            var value2 = (uint?)30;
+            var valueCount = new ValueCount(value2, value1);
+            Assert.AreEqual(value1, valueCount.Min);
+            Assert.AreEqual(value2, valueCount.Max);
+            Assert.AreEqual("{10,30}", valueCount.OriginalString);
+        }
+
+
         [Test] public void TwoArgConstructorUintFirstNull()
         {
             var value2 = (uint?) 30;
