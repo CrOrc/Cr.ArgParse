@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cr.ArgParse", "src\Cr.ArgParse\Cr.ArgParse.csproj", "{12E423B9-5B5A-403A-877B-B4B7F4ADB66B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cr.ArgParse.Tests", "src\Cr.ArgParse.Tests\Cr.ArgParse.Tests.csproj", "{CEA89A3F-6F2C-4B5A-A3A5-BDF65171F943}"
