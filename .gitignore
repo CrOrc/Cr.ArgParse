@@ -109,4 +109,6 @@ UpgradeLog*.XML
 
 # temporary local files
 tmp/
+# Monodevelop files
 *~
+*.userprefs
