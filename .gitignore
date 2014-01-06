@@ -109,3 +109,4 @@ UpgradeLog*.XML
 
 # temporary local files
 tmp/
+*~
