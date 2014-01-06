@@ -6,7 +6,7 @@ namespace Cr.ArgParse
     {
         public ArgumentAction Action { get; private set; }
 
-        public ArgumentError(ArgumentAction action, string message):base(message)
+        public ArgumentError(ArgumentAction action, string message, Exception innerException=null):base(message,innerException)
         {
             Action = action;
         }
