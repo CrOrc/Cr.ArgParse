@@ -93,7 +93,8 @@ AppPackages/
 [Oo]bj
 sql
 TestResults
-[Tt]est[Rr]esult*
+test-results
+[Tt]est-[Rr]esult*
 *.Cache
 ClientBin
 [Ss]tyle[Cc]op.*
@@ -112,3 +113,4 @@ tmp/
 # Monodevelop files
 *~
 *.userprefs
+*.resources
