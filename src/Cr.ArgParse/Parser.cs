@@ -221,22 +221,55 @@ namespace Cr.ArgParse
             var positionals = GetPositionalActions();
 
             Func<int, int> consumePositionals =
-                startIndex =>
+                patternStartIndex =>
                 {
-                    var selectedPattern = argStringPattern.Substring(startIndex);
+                    var selectedPattern = argStringPattern.Substring(patternStartIndex);
                     var argCounts = MatchArgumentsPartial(positionals, selectedPattern);
                     
                     //slice off the appropriate arg strings for each Positional
                     // and add the Positional and its args to the list
                     foreach (var it in positionals.Zip(argCounts,(action,argCount)=>new {action,argCount}))
                     {
-                        var actionArgs = argStrings.Skip(startIndex).Take(it.argCount).ToList();
-                        startIndex += it.argCount;
+                        var actionArgs = argStrings.Skip(patternStartIndex).Take(it.argCount).ToList();
+                        patternStartIndex += it.argCount;
                         takeAction(it.action, actionArgs,null);
                     }
                     positionals.RemoveRange(0,argCounts.Count);
-                    return startIndex;
+                    return patternStartIndex;
                 };
+            extras = new List<string>();
+            var globalStartIndex = 0;
+            var maxOptionStringIndex = optionStringIndices.Any() ? optionStringIndices.Keys.Max() : -1;
+            while (globalStartIndex<=maxOptionStringIndex)
+            {
+                var nextOptionStringIndex = optionStringIndices.Keys.Where(it => it >= globalStartIndex).Min();
+                if (globalStartIndex != nextOptionStringIndex)
+                {
+                    var positionalEndIndex = consumePositionals(globalStartIndex);
+                    // only try to parse the next optional if we didn't consume
+                    // the option string during the positionals parsing
+                    globalStartIndex = positionalEndIndex;
+                    if (positionalEndIndex > nextOptionStringIndex)
+                        continue;
+                }
+                
+                // if we consumed all the positionals we could and we're not
+                // at the index of an option string, there were extra arguments
+                if (!optionStringIndices.ContainsKey(globalStartIndex))
+                {
+                    extras.AddRange(argStrings.Skip(globalStartIndex).Take(nextOptionStringIndex-globalStartIndex));
+                    globalStartIndex = nextOptionStringIndex;
+                }
+
+                // consume the next optional and any arguments for it
+                globalStartIndex = consumeOptional(globalStartIndex);
+            }
+
+            // consume any positionals following the last Optional
+            var globalStopIndex = consumePositionals(globalStartIndex);
+
+            // if we didn't consume all the argument strings, there were extras
+            extras.AddRange(argStrings.Skip(globalStopIndex));
 
             return parseResult;
         }
