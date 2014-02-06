@@ -211,7 +211,7 @@ namespace Cr.ArgParse
                     // add the Optional to the list and return the index at which
                     // the Optional's string args stopped
 
-                    if(!actionTuples.Any())
+                    if (!actionTuples.Any())
                         throw new Exception("should be at least on action");
                     foreach (var actionTuple in actionTuples)
                         takeAction(actionTuple.Action, actionTuple.Arguments, actionTuple.OptionString);
@@ -225,22 +225,22 @@ namespace Cr.ArgParse
                 {
                     var selectedPattern = argStringPattern.Substring(patternStartIndex);
                     var argCounts = MatchArgumentsPartial(positionals, selectedPattern);
-                    
+
                     //slice off the appropriate arg strings for each Positional
                     // and add the Positional and its args to the list
-                    foreach (var it in positionals.Zip(argCounts,(action,argCount)=>new {action,argCount}))
+                    foreach (var it in positionals.Zip(argCounts, (action, argCount) => new {action, argCount}))
                     {
                         var actionArgs = argStrings.Skip(patternStartIndex).Take(it.argCount).ToList();
                         patternStartIndex += it.argCount;
-                        takeAction(it.action, actionArgs,null);
+                        takeAction(it.action, actionArgs, null);
                     }
-                    positionals.RemoveRange(0,argCounts.Count);
+                    positionals.RemoveRange(0, argCounts.Count);
                     return patternStartIndex;
                 };
             extras = new List<string>();
             var globalStartIndex = 0;
             var maxOptionStringIndex = optionStringIndices.Any() ? optionStringIndices.Keys.Max() : -1;
-            while (globalStartIndex<=maxOptionStringIndex)
+            while (globalStartIndex <= maxOptionStringIndex)
             {
                 var nextOptionStringIndex = optionStringIndices.Keys.Where(it => it >= globalStartIndex).Min();
                 if (globalStartIndex != nextOptionStringIndex)
@@ -252,12 +252,12 @@ namespace Cr.ArgParse
                     if (positionalEndIndex > nextOptionStringIndex)
                         continue;
                 }
-                
+
                 // if we consumed all the positionals we could and we're not
                 // at the index of an option string, there were extra arguments
                 if (!optionStringIndices.ContainsKey(globalStartIndex))
                 {
-                    extras.AddRange(argStrings.Skip(globalStartIndex).Take(nextOptionStringIndex-globalStartIndex));
+                    extras.AddRange(argStrings.Skip(globalStartIndex).Take(nextOptionStringIndex - globalStartIndex));
                     globalStartIndex = nextOptionStringIndex;
                 }
 
@@ -378,7 +378,7 @@ namespace Cr.ArgParse
         {
             try
             {
-                var valueCountPattern = "^"+GetValueCountPattern(action);
+                var valueCountPattern = "^" + GetValueCountPattern(action);
                 var match = Regex.Match(argStringsPattern, valueCountPattern);
                 return match.Groups[1].Value.Length;
             }
@@ -394,10 +394,10 @@ namespace Cr.ArgParse
             for (var i = actions.Count; i > 0; --i)
             {
                 var actionsSlice = actions.Take(i);
-                var pattern = "^"+string.Concat(actionsSlice.Select(GetValueCountPattern));
-                var match=Regex.Match(argStringsPattern, pattern);
+                var pattern = "^" + string.Concat(actionsSlice.Select(GetValueCountPattern));
+                var match = Regex.Match(argStringsPattern, pattern);
                 if (!match.Success) continue;
-                res.AddRange(match.Groups.OfType<Group>().Select(it=>it.Length));
+                res.AddRange(match.Groups.OfType<Group>().Select(it => it.Length));
                 break;
             }
             return res;
@@ -415,14 +415,116 @@ namespace Cr.ArgParse
 
         private OptionTuple ParseOptional(string argString)
         {
-            return null;
+            // if it's an empty string, it was meant to be a positional
+            if (string.IsNullOrEmpty(argString)) return null;
+            // if it doesn't start with a prefix, it was meant to be positional
+            if (!argString.StartsWith(Prefixes))
+                return null;
+            // if the option string is present in the parser, return the action
+            ArgumentAction action;
+            if (OptionStringActions.TryGetValue(argString, out action))
+                return new OptionTuple(action, argString);
+            // if it's just a single character, it was meant to be positional
+            if (argString.Length == 1)
+                return null;
+            // if the option string before the "=" is present, return the action
+            if (argString.Contains('='))
+            {
+                var parts = argString.Split(new[] {'='}, 2);
+                var optionString = parts[0];
+                var explicitArg = parts.Skip(1).FirstOrDefault();
+                if (OptionStringActions.TryGetValue(optionString, out action))
+                    return new OptionTuple(action, optionString, explicitArg);
+            }
+
+            // search through all possible prefixes of the option string
+            // and all actions in the parser for possible interpretations
+            var optionTuples = GetOptionTuples(argString);
+            // if multiple actions match, the option string was ambiguous
+            if (optionTuples.Count > 1)
+            {
+                var options = string.Join(", ", optionTuples.Select(it => it.OptionString));
+                throw new Exception(string.Format("Ambiguous option: {0} could match {1}", argString, options));
+            }
+                // if exactly one action matched, this segmentation is good,
+                // so return the parsed action
+            else if (optionTuples.Count == 1)
+                return optionTuples[0];
+            /*
+
+        # if it was not found as an option, but it looks like a negative
+        # number, it was meant to be positional
+        # unless there are negative-number-like options
+        if self._negative_number_matcher.match(arg_string):
+            if not self._has_negative_number_optionals:
+                return None*/
+            // if it contains a space, it was meant to be a positional
+            if (argString.Contains(' ')) return null;
+
+            // it was meant to be an optional but there is no such option
+            // in this parser (though it might be a valid option in a subparser)
+            return new OptionTuple(null, argString);
+        }
+
+        private IList<OptionTuple> GetOptionTuples(string optionString)
+        {
+            var ret = new List<OptionTuple>();
+            if (string.IsNullOrEmpty(optionString) || optionString.Length < 2) return ret;
+            string optionPrefix;
+            string explicitArg;
+            // option strings starting with two prefix characters are only
+            // split at the '='
+            if (optionString.StartsWith(LongPrefixes))
+            {
+                if (optionString.Contains('='))
+                {
+                    var parts = optionString.Split(new[] {'='}, 2);
+                    optionPrefix = parts[0];
+                    explicitArg = parts.Skip(1).FirstOrDefault();
+                }
+                else
+                {
+                    optionPrefix = optionString;
+                    explicitArg = null;
+                }
+                ret.AddRange(
+                    OptionStringActions.Keys.Where(key => key.StartsWith(optionPrefix))
+                        .Select(optionKey => new OptionTuple(OptionStringActions[optionKey], optionKey, explicitArg)));
+            }
+                // single character options can be concatenated with their arguments
+                // but multiple character options always have to have their argument
+                // separate
+            else if (optionString.StartsWith(ShortPrefixes) && !optionString.StartsWith(LongPrefixes))
+            {
+                optionPrefix = optionString;
+                var shortOptionPrefix = optionString.Substring(0, 2);
+                var shortExplicitArg = optionString.Substring(2);
+                foreach (var optionKey in OptionStringActions.Keys)
+                {
+                    if (optionKey == shortOptionPrefix)
+                        ret.Add(new OptionTuple(OptionStringActions[optionKey], optionKey, shortExplicitArg));
+                    else if (optionKey.StartsWith(optionPrefix))
+                        ret.Add(new OptionTuple(OptionStringActions[optionKey], optionKey));
+                }
+            }
+                // shouldn't ever get here
+            else
+                throw new Exception(string.Format("Unexpected option string{0}", optionString));
+            return ret;
         }
 
         private class OptionTuple
         {
-            public ArgumentAction Action { get; set; }
-            public string ExplicitArgument { get; set; }
-            public string OptionString { get; set; }
+            public OptionTuple(ArgumentAction action, string optionString, string explicitArgument = null)
+            {
+                Action = action;
+                OptionString = optionString;
+                ExplicitArgument = explicitArgument;
+            }
+
+            public ArgumentAction Action { get; private set; }
+            public string ExplicitArgument { get; private set; }
+            public string OptionString { get; private set; }
         }
     }
 }
