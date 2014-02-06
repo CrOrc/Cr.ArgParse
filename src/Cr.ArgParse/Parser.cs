@@ -221,7 +221,22 @@ namespace Cr.ArgParse
             var positionals = GetPositionalActions();
 
             Func<int, int> consumePositionals =
-                startIndex => { return startIndex; };
+                startIndex =>
+                {
+                    var selectedPattern = argStringPattern.Substring(startIndex);
+                    var argCounts = MatchArgumentsPartial(positionals, selectedPattern);
+                    
+                    //slice off the appropriate arg strings for each Positional
+                    // and add the Positional and its args to the list
+                    foreach (var it in positionals.Zip(argCounts,(action,argCount)=>new {action,argCount}))
+                    {
+                        var actionArgs = argStrings.Skip(startIndex).Take(it.argCount).ToList();
+                        startIndex += it.argCount;
+                        takeAction(it.action, actionArgs,null);
+                    }
+                    positionals.RemoveRange(0,argCounts.Count);
+                    return startIndex;
+                };
 
             return parseResult;
         }
