@@ -7,9 +7,15 @@ namespace Cr.ArgParse.Tests
 {
     public class ParserTestCase
     {
+        private readonly Lazy<string> typeNameLazy;
         public IList<Argument> ArgumentSignatures { get; set; }
         public IList<string> Failures { get; set; }
         public IList<Tuple<string, ParseResult>> Successes { get; set; }
+
+        public ParserTestCase()
+        {
+            typeNameLazy = new Lazy<string>(() => GetType().Name);
+        }
 
         private Parser CreateParser()
         {
@@ -20,9 +26,14 @@ namespace Cr.ArgParse.Tests
             return parser;
         }
 
+        private string TypeName
+        {
+            get { return typeNameLazy.Value; }
+        }
+
         private string FormatTestCaseName(string argsStr, string format = "{0}")
         {
-            return string.Format(format, string.Format("args: {0}", argsStr));
+            return string.Format("{0}_{1}", TypeName, string.Format(format, string.Format("args: {0}", argsStr)));
         }
 
         public IEnumerable<TestCaseData> TestCases
