@@ -32,17 +32,21 @@ namespace Cr.ArgParse
                     var res = parseResult[action.Destination];
                     if (ReferenceEquals(res, null))
                         //if action.default is not SUPPRESS:
-                        if (!ReferenceEquals(action.Argument.DefaultValue, null))
+                        if (!ReferenceEquals(action.Argument.DefaultValue, null) || action.Argument.Type == null)
                             parseResult[action.Destination] = action.Argument.DefaultValue;
                 }
             }
 
             //parse the arguments and exit if there are any errors
-            parseResult = ParseKnowValueCount(args, parseResult);
+            parseResult = ParseKnowArguments(args, parseResult);
+            if (parseResult.UnrecognizedArguments != null && parseResult.UnrecognizedArguments.Any())
+            {
+                throw new UnrecognizedArgumentsException(parseResult.UnrecognizedArguments);
+            }
             return parseResult;
         }
 
-        private ParseResult ParseKnowValueCount(IEnumerable<string> args, ParseResult parseResult)
+        public ParseResult ParseKnowArguments(IEnumerable<string> args, ParseResult parseResult)
         {
             var argStrings = args.ToList();
             //map all mutually exclusive arguments to the other arguments they can't occur with
@@ -271,6 +275,8 @@ namespace Cr.ArgParse
             // if we didn't consume all the argument strings, there were extras
             extras.AddRange(argStrings.Skip(globalStopIndex));
 
+            if(extras.Any())
+                parseResult.UnrecognizedArguments = extras;
             return parseResult;
         }
 

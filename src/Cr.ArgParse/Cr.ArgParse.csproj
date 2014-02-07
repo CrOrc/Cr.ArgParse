@@ -43,6 +43,7 @@
     <Compile Include="CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
+    <Compile Include="UnrecognizedArgumentsException.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="IArgumentParser.cs" />

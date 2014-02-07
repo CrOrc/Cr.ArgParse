@@ -1,15 +1,16 @@
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests
 {
     [TestFixture] public class ParserTest : BaseTest
     {
-        [Test] public void CreateOptionalDefault()
+        [Test,
+         TestCaseSource(typeof (TestOptionalsSingleDash), "SuccessCases"),
+         TestCaseSource(typeof (TestOptionalsSingleDash), "FailureCases")] public void ParseArgumentsTest(Parser parser,
+             IEnumerable<string> args, ParseResult expectedResult)
         {
-            var parser = new Parser();
-            parser.AddArgument(new Argument {OptionStrings = new[] {"-e", "--example"}, DefaultValue = "example value"});
-            var res = parser.ParseArguments(new string[] {});
-            var expectedResult = new ParseResult {{"example", "example value"}};
+            var res = parser.ParseArguments(args);
             Asserter.AreEqual(expectedResult, res);
         }
     }
