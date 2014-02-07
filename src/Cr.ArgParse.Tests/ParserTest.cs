@@ -6,8 +6,7 @@ namespace Cr.ArgParse.Tests
     [TestFixture] public class ParserTest : BaseTest
     {
         [Test,
-         TestCaseSource(typeof (TestOptionalsSingleDash), "SuccessCases"),
-         TestCaseSource(typeof (TestOptionalsSingleDash), "FailureCases")] public void ParseArgumentsTest(Parser parser,
+         TestCaseSource(typeof (TestOptionalsSingleDash), "TestCases")] public void ParseArgumentsTest(Parser parser,
              IEnumerable<string> args, ParseResult expectedResult)
         {
             var res = parser.ParseArguments(args);
