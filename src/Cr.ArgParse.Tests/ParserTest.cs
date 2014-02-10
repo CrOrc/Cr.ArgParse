@@ -9,7 +9,8 @@ namespace Cr.ArgParse.Tests
         [Test,
          TestCaseSource(typeof (TestOptionalsSingleDash), "TestCases"),
          TestCaseSource(typeof (TestOptionalsSingleDashCombined), "TestCases"),
-         TestCaseSource(typeof (TestOptionalsSingleDashLong), "TestCases")
+         TestCaseSource(typeof (TestOptionalsSingleDashLong), "TestCases"),
+         TestCaseSource(typeof (TestOptionalsSingleDashSubsetAmbiguous), "TestCases")
         ] public void ParseArgumentsTest(Func<Parser> parserFactory,
             IEnumerable<string> args, ParseResult expectedResult, Type expectedExceptionType)
         {
@@ -31,7 +32,7 @@ namespace Cr.ArgParse.Tests
             if (expectedExceptionType != null)
                 Assert.That(occuredException, Is.InstanceOf(expectedExceptionType));
             else
-            Asserter.AreEqual(expectedResult, res);
+                Asserter.AreEqual(expectedResult, res);
         }
     }
 }

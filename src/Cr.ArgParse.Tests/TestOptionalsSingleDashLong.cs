@@ -1,4 +1,4 @@
-    using System;
+using System;
 
 namespace Cr.ArgParse.Tests
 {
@@ -16,7 +16,6 @@ namespace Cr.ArgParse.Tests
                 Tuple.Create("-fo a", new ParseResult {{"foo", "a"}}),
                 Tuple.Create("-f a", new ParseResult {{"foo", "a"}})
             };
-
         }
     }
 }
