@@ -386,11 +386,18 @@ namespace Cr.ArgParse
             {
                 var valueCountPattern = "^" + GetValueCountPattern(action);
                 var match = Regex.Match(argStringsPattern, valueCountPattern);
+                if (!match.Success)
+                    throw new ArgumentError(action,
+                        string.Format("Expected {0} argument(s)", action.ValueCount ?? new ValueCount(1)));
                 return match.Groups[1].Value.Length;
             }
-            catch
+            catch (ParserException)
             {
-                return 0;
+                throw;
+            }
+            catch (Exception err)
+            {
+                throw new ParserException("Match argument error", err);
             }
         }
 
@@ -413,7 +420,9 @@ namespace Cr.ArgParse
         {
             var res = action.IsRemainder
                 ? "([-AO]*)"
-                : (action.IsParser ? "(-*A[-AO]*)" : string.Format("(-*(?:A-*){0})", action.ValueCount));
+                : (action.IsParser
+                    ? "(-*A[-AO]*)"
+                    : string.Format("(-*(?:A-*){0})", action.ValueCount ?? new ValueCount(1)));
             if (action.OptionStrings.Any())
                 res = res.Replace("-*", "").Replace("-", "");
             return res;

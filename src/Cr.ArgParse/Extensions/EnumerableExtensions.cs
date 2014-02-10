@@ -10,9 +10,9 @@ namespace Cr.ArgParse.Extensions
             return ReferenceEquals(list, null) || !list.Any();
         }
 
-        public static bool IsTrue(this IEnumerable<bool> list)
+        public static bool IsTrue<T>(this IEnumerable<T> list)
         {
-            return !ReferenceEquals(list, null) && list.Any(it => it);
+            return !ReferenceEquals(list, null) && list.Any(it => !Equals(it, default(T)));
         }
     }
 }

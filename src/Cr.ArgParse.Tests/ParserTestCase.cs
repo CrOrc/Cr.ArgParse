@@ -12,9 +12,12 @@ namespace Cr.ArgParse.Tests
         public IList<string> Failures { get; set; }
         public IList<Tuple<string, ParseResult>> Successes { get; set; }
 
+        public Type DefaultExceptionType { get; set; }
+
         public ParserTestCase()
         {
             typeNameLazy = new Lazy<string>(() => GetType().Name);
+            DefaultExceptionType = typeof (ParserException);
         }
 
         private Parser CreateParser()
@@ -45,14 +48,16 @@ namespace Cr.ArgParse.Tests
                 return (Successes ?? new Tuple<string, ParseResult>[] {}).Select(
                     success =>
                         new TestCaseData(parser,
-                            success.Item1.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries), success.Item2)
-                            .SetName(FormatTestCaseName(success.Item1, "Success({0})"))).Concat(
-                                (Failures ?? new string[] {}).Select(
-                                    argsStr =>
-                                        new TestCaseData(parser,
-                                            argsStr.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries),
-                                            null).SetName(FormatTestCaseName(argsStr, "Fail({0})"))
-                                            .Throws(typeof (UnrecognizedArgumentsException))));
+                            success.Item1.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries), success.Item2,
+                            null)
+                            .SetName(FormatTestCaseName(success.Item1, "Success({0})")))
+                    .Concat(
+                        (Failures ?? new string[] {}).Select(
+                            argsStr =>
+                                new TestCaseData(parser,
+                                    argsStr.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries), null,
+                                    DefaultExceptionType)
+                                    .SetName(FormatTestCaseName(argsStr, "Fail({0})"))));
             }
         }
     }

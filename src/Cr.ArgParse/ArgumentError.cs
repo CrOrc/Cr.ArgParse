@@ -2,7 +2,7 @@
 
 namespace Cr.ArgParse
 {
-    public class ArgumentError : Exception
+    public class ArgumentError : ParserException
     {
         public ArgumentAction Action { get; private set; }
 

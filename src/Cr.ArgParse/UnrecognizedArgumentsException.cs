@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Cr.ArgParse
 {
-    public class UnrecognizedArgumentsException : Exception
+    public class UnrecognizedArgumentsException : ParserException
     {
         public IList<string> UnrecognizedArguments { get; private set; }
 
