@@ -40,6 +40,9 @@ namespace Cr.ArgParse
             RegisterActions(new Dictionary<string, Func<Argument, ArgumentAction>>
             {
                 {"store", arg => new StoreAction(arg)},
+                {"store_const", arg => new StoreConstAction(arg)},
+                {"store_true", arg => new StoreTrueAction(arg)},
+                {"store_false", arg => new StoreFalseAction(arg)},
                 {"count", arg => new CountAction(arg)}
             });
 
@@ -134,7 +137,7 @@ namespace Cr.ArgParse
                 preparedArgument = PrepareOptionalArgument(argument);
             var argumentAction = CreateAction(preparedArgument);
             if (ReferenceEquals(argumentAction, null))
-                throw new Exception("Unregistered action exception");
+                throw new ParserException("Unregistered action exception");
             return AddAction(argumentAction);
         }
 
@@ -144,7 +147,7 @@ namespace Cr.ArgParse
                 return HandleConflictWithError;
             if (StringComparer.InvariantCultureIgnoreCase.Equals("resolve", ConflictHandlerName))
                 return HandleConflictWithResolve;
-            throw new Exception(string.Format("Invalid conflict resolution value: {0}", ConflictHandlerName));
+            throw new ParserException(string.Format("Invalid conflict resolution value: {0}", ConflictHandlerName));
         }
 
         public void CheckConflict(ArgumentAction action)
@@ -167,8 +170,8 @@ namespace Cr.ArgParse
             var conflictionOptions = conflictingActions.Select(it => it.Key).ToList();
             var conflictString = string.Join(", ", conflictionOptions);
             if (conflictionOptions.Count == 1)
-                throw new Exception(string.Format("Confliction option string: {0}", conflictString));
-            throw new Exception(string.Format("Confliction option strings: {0}", conflictString));
+                throw new ParserException(string.Format("Confliction option string: {0}", conflictString));
+            throw new ParserException(string.Format("Confliction option strings: {0}", conflictString));
         }
 
         private void HandleConflictWithResolve(ArgumentAction action,
@@ -258,9 +261,11 @@ namespace Cr.ArgParse
 
         private Argument PrepareOptionalArgument(Argument argument)
         {
-            var res = new Argument(argument);
-            res.OptionStrings =
-                (argument.OptionStrings ?? new string[] {}).Where(it => it.StartsWith(Prefixes)).ToList();
+            var res = new Argument(argument)
+            {
+                OptionStrings =
+                    (argument.OptionStrings ?? new string[] {}).Where(it => it.StartsWith(Prefixes)).ToList()
+            };
             if (!res.OptionStrings.Any())
                 throw new Exception("Optional argument should have name starting with prefix");
             // infer destination
@@ -271,7 +276,7 @@ namespace Cr.ArgParse
                     StripPrefix(longOptionStrings.FirstOrDefault() ?? res.OptionStrings.FirstOrDefault());
             }
             if (string.IsNullOrWhiteSpace(res.Destination))
-                throw new Exception("Destination should be specified for options like " + res.OptionStrings[0]);
+                throw new ParserException("Destination should be specified for options like " + res.OptionStrings[0]);
             return res;
         }
 

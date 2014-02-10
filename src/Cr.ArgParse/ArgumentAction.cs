@@ -20,12 +20,12 @@ namespace Cr.ArgParse
 
         public string Destination { get; private set; }
 
-        public object DefaultValue
+        public virtual object DefaultValue
         {
             get { return Argument.DefaultValue; }
         }
 
-        public object ConstValue
+        public virtual object ConstValue
         {
             get { return Argument.ConstValue; }
         }
@@ -35,7 +35,7 @@ namespace Cr.ArgParse
             get { return Argument.MetaVariable; }
         }
 
-        public ValueCount ValueCount
+        public virtual ValueCount ValueCount
         {
             get { return Argument.ValueCount; }
         }

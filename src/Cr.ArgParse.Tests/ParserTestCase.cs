@@ -43,18 +43,19 @@ namespace Cr.ArgParse.Tests
         {
             get
             {
-                var parser = CreateParser();
+                var cachedParsers = new Parser[1];
+                Func<Parser> parserFactory = () => { return cachedParsers[0] ?? (cachedParsers[0] = CreateParser()); };
 
                 return (Successes ?? new Tuple<string, ParseResult>[] {}).Select(
                     success =>
-                        new TestCaseData(parser,
+                        new TestCaseData(parserFactory,
                             success.Item1.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries), success.Item2,
                             null)
                             .SetName(FormatTestCaseName(success.Item1, "Success({0})")))
                     .Concat(
                         (Failures ?? new string[] {}).Select(
                             argsStr =>
-                                new TestCaseData(parser,
+                                new TestCaseData(parserFactory,
                                     argsStr.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries), null,
                                     DefaultExceptionType)
                                     .SetName(FormatTestCaseName(argsStr, "Fail({0})"))));

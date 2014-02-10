@@ -32,8 +32,8 @@ namespace Cr.ArgParse
                     var res = parseResult[action.Destination];
                     if (ReferenceEquals(res, null))
                         //if action.default is not SUPPRESS:
-                        if (!ReferenceEquals(action.Argument.DefaultValue, null) || action.Argument.Type == null)
-                            parseResult[action.Destination] = action.Argument.DefaultValue;
+                        if (!ReferenceEquals(action.DefaultValue, null) || action.Argument.Type == null)
+                            parseResult[action.Destination] = action.DefaultValue;
                 }
             }
 

@@ -44,6 +44,9 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
     <Compile Include="ParserException.cs" />
+    <Compile Include="StoreConstAction.cs" />
+    <Compile Include="StoreFalseAction.cs" />
+    <Compile Include="StoreTrueAction.cs" />
     <Compile Include="UnrecognizedArgumentsException.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="Parser.cs" />
