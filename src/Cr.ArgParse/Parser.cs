@@ -216,7 +216,7 @@ namespace Cr.ArgParse
                     // the Optional's string args stopped
 
                     if (!actionTuples.Any())
-                        throw new Exception("should be at least on action");
+                        throw new ParserException("Should be at least one action");
                     foreach (var actionTuple in actionTuples)
                         takeAction(actionTuple.Action, actionTuple.Arguments, actionTuple.OptionString);
                     return stopIndex;
@@ -459,7 +459,7 @@ namespace Cr.ArgParse
             if (optionTuples.Count > 1)
             {
                 var options = string.Join(", ", optionTuples.Select(it => it.OptionString));
-                throw new Exception(string.Format("Ambiguous option: {0} could match {1}", argString, options));
+                throw new ParserException(string.Format("Ambiguous option: {0} could match {1}", argString, options));
             }
                 // if exactly one action matched, this segmentation is good,
                 // so return the parsed action
@@ -524,7 +524,7 @@ namespace Cr.ArgParse
             }
                 // shouldn't ever get here
             else
-                throw new Exception(string.Format("Unexpected option string{0}", optionString));
+                throw new ParserException(string.Format("Unexpected option string{0}", optionString));
             return ret;
         }
 
