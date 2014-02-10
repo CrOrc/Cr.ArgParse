@@ -30,6 +30,10 @@ namespace Cr.ArgParse
             get { return Container.OptionStringActions; }
         }
 
+        public override IList<bool> HasNegativeNumberOptionals
+        {
+            get { return Container.HasNegativeNumberOptionals; }
+        }
         public override ArgumentAction AddAction(ArgumentAction argumentAction)
         {
             var res = base.AddAction(argumentAction);

@@ -275,7 +275,7 @@ namespace Cr.ArgParse
             // if we didn't consume all the argument strings, there were extras
             extras.AddRange(argStrings.Skip(globalStopIndex));
 
-            if(extras.Any())
+            if (extras.Any())
                 parseResult.UnrecognizedArguments = extras;
             return parseResult;
         }
@@ -456,14 +456,14 @@ namespace Cr.ArgParse
                 // so return the parsed action
             else if (optionTuples.Count == 1)
                 return optionTuples[0];
-            /*
 
-        # if it was not found as an option, but it looks like a negative
-        # number, it was meant to be positional
-        # unless there are negative-number-like options
-        if self._negative_number_matcher.match(arg_string):
-            if not self._has_negative_number_optionals:
-                return None*/
+            // if it was not found as an option, but it looks like a negative
+            // number, it was meant to be positional
+            // unless there are negative-number-like options
+            if (NegativeNumberMatcher.IsMatch(argString))
+                if (!HasNegativeNumberOptionals.IsTrue())
+                    return null;
+
             // if it contains a space, it was meant to be a positional
             if (argString.Contains(' ')) return null;
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
@@ -15,6 +16,12 @@ namespace Cr.ArgParse
         private readonly IDictionary<string, ArgumentAction> optionStringActions;
 
         private IList<string> prefixes;
+        private readonly Regex negativeNumberMatcher;
+
+        protected Regex NegativeNumberMatcher
+        {
+            get { return negativeNumberMatcher; }
+        }
 
         public ActionContainer()
             : this("", new[] {"-", "--", "/"}, "resolve")
@@ -47,7 +54,16 @@ namespace Cr.ArgParse
             //groups
             ActionGroups = new List<ArgumentGroup>();
             MutuallyExclusiveGroups = new List<MutuallyExclusiveGroup>();
+
+            // determines whether an "option" looks like a negative number
+            negativeNumberMatcher = new Regex(@"^-\d+(\.\d*)?$|^-\.\d+$");
+
+            // whether or not there are any optionals that look like negative
+            // numbers -- uses a list so it can be shared and edited
+            HasNegativeNumberOptionals = new List<bool>();
         }
+
+        public virtual IList<bool> HasNegativeNumberOptionals { get; private set; }
 
         public IList<ArgumentGroup> ActionGroups { get; private set; }
         public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
@@ -181,6 +197,10 @@ namespace Cr.ArgParse
 
             foreach (var optionString in argumentAction.OptionStrings)
                 OptionStringActions[optionString] = argumentAction;
+
+            if (!HasNegativeNumberOptionals.IsTrue() &&
+                argumentAction.OptionStrings.Any(optionString => NegativeNumberMatcher.IsMatch(optionString)))
+                HasNegativeNumberOptionals.Add(true);
             return argumentAction;
         }
 
