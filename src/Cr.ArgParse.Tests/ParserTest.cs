@@ -7,10 +7,11 @@ namespace Cr.ArgParse.Tests
     [TestFixture] public class ParserTest : BaseTest
     {
         [Test,
-         TestCaseSource(typeof (TestOptionalsSingleDash), "TestCases"),
-         TestCaseSource(typeof (TestOptionalsSingleDashCombined), "TestCases"),
-         TestCaseSource(typeof (TestOptionalsSingleDashLong), "TestCases"),
-         TestCaseSource(typeof (TestOptionalsSingleDashSubsetAmbiguous), "TestCases")
+         TestCaseSource(typeof (TestOptionalsSingleDash)),
+         TestCaseSource(typeof (TestOptionalsSingleDashCombined)),
+         TestCaseSource(typeof (TestOptionalsSingleDashLong)),
+         TestCaseSource(typeof (TestOptionalsSingleDashSubsetAmbiguous)),
+         TestCaseSource(typeof (TestOptionalsSingleDashAmbiguous))
         ] public void ParseArgumentsTest(Func<Parser> parserFactory,
             IEnumerable<string> args, ParseResult expectedResult, Type expectedExceptionType)
         {

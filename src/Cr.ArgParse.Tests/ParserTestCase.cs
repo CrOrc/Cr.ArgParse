@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests
 {
-    public class ParserTestCase
+    public class ParserTestCase: IEnumerable<TestCaseData>
     {
         private readonly Lazy<string> typeNameLazy;
         public IList<Argument> ArgumentSignatures { get; set; }
@@ -60,6 +61,16 @@ namespace Cr.ArgParse.Tests
                                     DefaultExceptionType)
                                     .SetName(FormatTestCaseName(argsStr, "Fail({0})"))));
             }
+        }
+
+        public IEnumerator<TestCaseData> GetEnumerator()
+        {
+            return TestCases.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }
