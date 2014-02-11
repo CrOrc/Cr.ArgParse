@@ -135,7 +135,7 @@ namespace Cr.ArgParse
 
                     // identify additional optionals in the same arg string
                     // (e.g. -xyz is the same as -x -y -z if no args are required)
-                    var actionTuples = new List<ActionTuple>();
+                    var actionTuples = new ActionTupleList();
                     while (true)
                     {
                         //if we found no optional action, skip it
@@ -153,12 +153,7 @@ namespace Cr.ArgParse
                             if (argCount == 0 && optionString.StartsWith(ShortPrefixes) &&
                                 !optionString.StartsWith(LongPrefixes))
                             {
-                                actionTuples.Add(new ActionTuple
-                                {
-                                    Action = action,
-                                    Arguments = new string[] {},
-                                    OptionString = optionString
-                                });
+                                actionTuples.Add(action, new string[] {}, optionString);
                                 var prefix = optionString.Substring(0, 1);
                                 optionString = prefix + explicitArg[0];
                                 var newExplicitArg = explicitArg.Length > 1 ? explicitArg.Substring(1) : null;
@@ -179,12 +174,7 @@ namespace Cr.ArgParse
                             else if (argCount == 1)
                             {
                                 stopIndex = startIndex + 1;
-                                actionTuples.Add(new ActionTuple
-                                {
-                                    Action = action,
-                                    Arguments = new[] {explicitArg},
-                                    OptionString = optionString
-                                });
+                                actionTuples.Add(action, new[] {explicitArg}, optionString);
                                 break;
                             }
                                 // error if a double-dash option did not use the explicit argument
@@ -203,12 +193,7 @@ namespace Cr.ArgParse
                             var selectedPatterns = argStringPattern.Substring(start);
                             var argCount = MatchArgument(action, selectedPatterns);
                             stopIndex = start + argCount;
-                            actionTuples.Add(new ActionTuple
-                            {
-                                Action = action,
-                                Arguments = argStrings.Skip(start).Take(argCount).ToList(),
-                                OptionString = optionString
-                            });
+                            actionTuples.Add(action, argStrings.Skip(start).Take(argCount).ToList(), optionString);
                             break;
                         }
                     }
@@ -282,9 +267,24 @@ namespace Cr.ArgParse
 
         private class ActionTuple
         {
-            public ArgumentAction Action { get; set; }
-            public IList<string> Arguments { get; set; }
-            public string OptionString { get; set; }
+            public ActionTuple(ArgumentAction action, IList<string> arguments, string optionString)
+            {
+                Action = action;
+                Arguments = arguments;
+                OptionString = optionString;
+            }
+
+            public ArgumentAction Action { get; private set; }
+            public IList<string> Arguments { get; private set; }
+            public string OptionString { get; private set; }
+        }
+
+        private class ActionTupleList : List<ActionTuple>
+        {
+            public void Add(ArgumentAction action, IList<string> arguments, string optionString)
+            {
+                Add(new ActionTuple(action, arguments, optionString));
+            }
         }
 
         private static string GetActionName(ArgumentAction action)
@@ -298,7 +298,7 @@ namespace Cr.ArgParse
 
         private object GetValues(ArgumentAction action, IEnumerable<string> argumentStrings)
         {
-            object value = null;
+            object value;
             var argStrings = (argumentStrings ?? new string[] {}).ToList();
             if (argumentStrings != null)
                 if (action.IsParser || action.IsRemainder)
@@ -307,7 +307,8 @@ namespace Cr.ArgParse
                     argumentStrings = argStrings;
                 }
             //optional argument produces a default when not present
-            if ((argumentStrings == null || !argumentStrings.Any()) && action.IsOptional)
+            var hasNoArgs = argStrings.IsNullOrEmpty();
+            if (hasNoArgs && action.IsOptional)
             {
                 value = action.OptionStrings.Any() ? action.ConstValue : action.DefaultValue;
                 var strValue = value as string;
@@ -318,7 +319,7 @@ namespace Cr.ArgParse
                 }
             }
                 //when ValueCount='0,n' on a positional, if there were no command-line args, use the default if it is anything other than null
-            else if ((argumentStrings == null || !argumentStrings.Any()) && !action.OptionStrings.Any() &&
+            else if (hasNoArgs && !action.OptionStrings.Any() &&
                      action.ValueCount != null &&
                      action.ValueCount.Min == 0 && action.ValueCount.Max > 0)
             {
@@ -369,9 +370,8 @@ namespace Cr.ArgParse
             }
             catch (Exception err)
             {
-                //TODO: Add err as inner exception
                 throw new ArgumentError(action,
-                    string.Format("Invalid type \"{0}\" for value \"{1}\"", action.Type, argString));
+                    string.Format("Invalid type \"{0}\" for value \"{1}\"", action.Type, argString), err);
             }
         }
 
@@ -461,9 +461,9 @@ namespace Cr.ArgParse
                 var options = string.Join(", ", optionTuples.Select(it => it.OptionString));
                 throw new ParserException(string.Format("Ambiguous option: {0} could match {1}", argString, options));
             }
-                // if exactly one action matched, this segmentation is good,
-                // so return the parsed action
-            else if (optionTuples.Count == 1)
+            // if exactly one action matched, this segmentation is good,
+            // so return the parsed action
+            if (optionTuples.Count == 1)
                 return optionTuples[0];
 
             // if it was not found as an option, but it looks like a negative
@@ -486,11 +486,11 @@ namespace Cr.ArgParse
             var ret = new List<OptionTuple>();
             if (string.IsNullOrEmpty(optionString) || optionString.Length < 2) return ret;
             string optionPrefix;
-            string explicitArg;
             // option strings starting with two prefix characters are only
             // split at the '='
             if (optionString.StartsWith(LongPrefixes))
             {
+                string explicitArg;
                 if (optionString.Contains('='))
                 {
                     var parts = optionString.Split(new[] {'='}, 2);
