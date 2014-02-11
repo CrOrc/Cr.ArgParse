@@ -71,9 +71,9 @@ namespace Cr.ArgParse
         public IList<ArgumentGroup> ActionGroups { get; private set; }
         public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
 
-        public ArgumentGroup AddArgumentGroup(string title, string description)
+        public ArgumentGroup AddArgumentGroup(string title, string description=null)
         {
-            var group = new ArgumentGroup(this, title, description);
+            var group = new ArgumentGroup(this, title, description ?? title);
             ActionGroups.Add(group);
             return group;
         }
