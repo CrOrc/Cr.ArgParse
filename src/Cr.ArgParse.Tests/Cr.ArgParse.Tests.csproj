@@ -55,6 +55,8 @@
     <Compile Include="ParserTest.cs" />
     <Compile Include="ParserTestCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestOptionalsDoubleDash.cs" />
+    <Compile Include="TestOptionalsNumeric.cs" />
     <Compile Include="TestOptionalsSingleDash.cs" />
     <Compile Include="TestOptionalsSingleDashAmbiguous.cs" />
     <Compile Include="TestOptionalsSingleDashCombined.cs" />
