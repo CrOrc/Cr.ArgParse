@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Cr.ArgParse
 {
@@ -8,9 +9,13 @@ namespace Cr.ArgParse
     /// </summary>
     public class Argument
     {
-        public Argument(Argument argument=null)
+        public Argument()
         {
-            if (ReferenceEquals(argument,null)) return;
+        }
+
+        public Argument(Argument argument)
+        {
+            if (ReferenceEquals(argument, null)) return;
             OptionStrings = argument.OptionStrings;
             Destination = argument.Destination;
             HelpText = argument.HelpText;
@@ -24,10 +29,35 @@ namespace Cr.ArgParse
             Type = argument.Type;
         }
 
+        public Argument(params string[] optionStrings) : this(optionStrings as IEnumerable<string>)
+        {
+        }
+
+        public Argument(IEnumerable<string> optionStrings)
+        {
+            OptionStrings = (optionStrings ?? new string[] {}).ToList();
+        }
+
         /// <summary>
-        /// strings to identify argument. Empty for positional arguments.
+        /// Custom action to be performed on argument. If present <see cref="ActionName"/> will be ignored.
         /// </summary>
-        public IList<string> OptionStrings { get; set;}
+        public Func<Argument, ArgumentAction> ActionFactory { get; set; }
+
+        /// <summary>
+        /// Name of predefined action.
+        /// One of "store", "store_const", "store_true", "store_false", "append", "append_const", "count".
+        /// </summary>
+        public string ActionName { get; set; }
+
+        /// <summary>
+        /// Default argument value
+        /// </summary>
+        public object ConstValue { get; set; }
+
+        /// <summary>
+        /// Default argument value
+        /// </summary>
+        public object DefaultValue { get; set; }
 
         /// <summary>
         /// Name for storing parsing results.
@@ -40,46 +70,28 @@ namespace Cr.ArgParse
         public string HelpText { get; set; }
 
         /// <summary>
-        /// Name of predefined action.
-        /// One of "store", "store_const", "store_true", "store_false", "append", "append_const", "count".
-        /// </summary>
-        public string ActionName { get; set; }
-
-        /// <summary>
-        /// Custom action to be performed on argument. If present <see cref="ActionName"/> will be ignored.
-        /// </summary>
-        public Func<Argument, ArgumentAction> ActionFactory { get; set; }
-
-        /// <summary>
-        /// Count of values for this argument.
-        /// </summary>
-        public ValueCount ValueCount { get; set; }
-
-        /// <summary>
         /// Is argument required.
         /// </summary>
         public bool IsRequired { get; set; }
-
-        /// <summary>
-        /// Default argument value
-        /// </summary>
-        public object DefaultValue { get; set; }
-
-        /// <summary>
-        /// Default argument value
-        /// </summary>
-        public object ConstValue { get; set; }
-
 
         /// <summary>
         /// Argument to show in help / errors
         /// </summary>
         public string MetaVariable { get; set; }
 
+        /// <summary>
+        /// strings to identify argument. Empty for positional arguments.
+        /// </summary>
+        public IList<string> OptionStrings { get; set; }
 
         /// <summary>
         /// Name argument type
         /// </summary>
         public string Type { get; set; }
+
+        /// <summary>
+        /// Count of values for this argument.
+        /// </summary>
+        public ValueCount ValueCount { get; set; }
     }
 }

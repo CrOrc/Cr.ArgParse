@@ -1,20 +1,18 @@
-using System;
-
 namespace Cr.ArgParse.Tests
 {
     public class TestOptionalsSingleDash : ParserTestCase
     {
         public TestOptionalsSingleDash()
         {
-            ArgumentSignatures = new[] {new Argument {OptionStrings = new[] {"-x"}}};
+            ArgumentSignatures = new[] {new Argument("-x")};
             Failures = new[] {"-x", "a", "--foo", "-x --foo", "-x -y"};
-            Successes = new[]
+            Successes = new SuccessCollection
             {
-                Tuple.Create("", new ParseResult {{"x", null}}),
-                Tuple.Create("-x a", new ParseResult {{"x", "a"}}),
-                Tuple.Create("-xa", new ParseResult {{"x", "a"}}),
-                Tuple.Create("-x -1", new ParseResult {{"x", "-1"}}),
-                Tuple.Create("-x-1", new ParseResult {{"x", "-1"}})
+                {"", new ParseResult {{"x", null}}},
+                {"-x a", new ParseResult {{"x", "a"}}},
+                {"-xa", new ParseResult {{"x", "a"}}},
+                {"-x -1", new ParseResult {{"x", "-1"}}},
+                {"-x-1", new ParseResult {{"x", "-1"}}}
             };
         }
     }

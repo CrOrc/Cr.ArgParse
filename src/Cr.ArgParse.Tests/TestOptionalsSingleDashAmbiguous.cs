@@ -8,21 +8,21 @@ namespace Cr.ArgParse.Tests
         {
             ArgumentSignatures = new[]
             {
-                new Argument {OptionStrings = new[] {"-foobar"}},
-                new Argument {OptionStrings = new[] {"-foorab"}}
+                new Argument("-foobar"),
+                new Argument("-foorab")
             };
 
             Failures = new[] {"-f", "-f a", "-fa", "-foa", "-foo", "-fo", "-foo b"};
 
-            Successes = new[]
+            Successes = new SuccessCollection
             {
-                Tuple.Create("", new ParseResult {{"foobar", null}, {"foorab", null}}),
-                Tuple.Create("-foob a", new ParseResult {{"foobar", "a"}, {"foorab", null}}),
-                Tuple.Create("-foor a", new ParseResult {{"foobar", null}, {"foorab", "a"}}),
-                Tuple.Create("-fooba a", new ParseResult {{"foobar", "a"}, {"foorab", null}}),
-                Tuple.Create("-foora a", new ParseResult {{"foobar", null}, {"foorab", "a"}}),
-                Tuple.Create("-foobar a", new ParseResult {{"foobar", "a"}, {"foorab", null}}),
-                Tuple.Create("-foorab a", new ParseResult {{"foobar", null}, {"foorab", "a"}})
+                {"", new ParseResult {{"foobar", null}, {"foorab", null}}},
+                {"-foob a", new ParseResult {{"foobar", "a"}, {"foorab", null}}},
+                {"-foor a", new ParseResult {{"foobar", null}, {"foorab", "a"}}},
+                {"-fooba a", new ParseResult {{"foobar", "a"}, {"foorab", null}}},
+                {"-foora a", new ParseResult {{"foobar", null}, {"foorab", "a"}}},
+                {"-foobar a", new ParseResult {{"foobar", "a"}, {"foorab", null}}},
+                {"-foorab a", new ParseResult {{"foobar", null}, {"foorab", "a"}}}
             };
         }
     }

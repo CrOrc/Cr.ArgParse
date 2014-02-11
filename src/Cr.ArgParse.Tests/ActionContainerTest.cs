@@ -13,13 +13,13 @@ namespace Cr.ArgParse.Tests
         [Test] public void AddOneOptionalArgument()
         {
             var actionContainer = new ActionContainer();
-            var res = actionContainer.AddArgument(new Argument {OptionStrings = new[] {"-e", "--example"}});
+            var res = actionContainer.AddArgument(new Argument("-e", "--example"));
 
             CollectionAssert.AreEquivalent(new[] {"-e", "--example"}, actionContainer.OptionStringActions.Keys);
 
             Assert.That(res, Is.InstanceOf<StoreAction>());
             Asserter.AreEqual(
-                new StoreAction(new Argument {OptionStrings = new[] {"-e", "--example"}, Destination = "example"})
+                new StoreAction(new Argument("-e", "--example") { Destination = "example" })
                 {
                     Container = actionContainer,
                 },
@@ -29,9 +29,8 @@ namespace Cr.ArgParse.Tests
         [Test] public void AddOneOptionalArgumentWithActionName()
         {
             var actionContainer = new ActionContainer();
-            var argument = new Argument
+            var argument = new Argument("-e", "--example")
             {
-                OptionStrings = new[] {"-e", "--example"},
                 ActionName = "count"
             };
             var argumentCopy = new Argument(argument);

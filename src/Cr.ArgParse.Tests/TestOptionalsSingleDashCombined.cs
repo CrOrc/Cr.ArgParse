@@ -8,9 +8,9 @@ namespace Cr.ArgParse.Tests
         {
             ArgumentSignatures = new[]
             {
-                new Argument {OptionStrings = new[] {"-x"}, ActionName = "store_true"},
-                new Argument {OptionStrings = new[] {"-yyy"}, ActionName = "store_const", ConstValue = 42},
-                new Argument {OptionStrings = new[] {"-z"}}
+                new Argument("-x") {ActionName = "store_true"},
+                new Argument("-yyy") {ActionName = "store_const", ConstValue = 42},
+                new Argument("-z")
             };
 
             Failures = new[]
@@ -18,20 +18,20 @@ namespace Cr.ArgParse.Tests
                 "a", "--foo", "-xa", "-x --foo", "-x -z", "-z -x",
                 "-yx", "-yz a", "-yyyx", "-yyyza", "-xyza"
             };
-            Successes = new[]
+            Successes = new SuccessCollection
             {
-                Tuple.Create("", new ParseResult {{"x", false}, {"yyy", null}, {"z", null}}),
-                Tuple.Create("-x", new ParseResult {{"x", true}, {"yyy", null}, {"z", null}}),
-                Tuple.Create("-za", new ParseResult {{"x", false}, {"yyy", null}, {"z", "a"}}),
-                Tuple.Create("-z a", new ParseResult {{"x", false}, {"yyy", null}, {"z", "a"}}),
-                Tuple.Create("-xza", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}),
-                Tuple.Create("-xz a", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}),
-                Tuple.Create("-x -za", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}),
-                Tuple.Create("-x -z a", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}),
-                Tuple.Create("-y", new ParseResult {{"x", false}, {"yyy", 42}, {"z", null}}),
-                Tuple.Create("-yyy", new ParseResult {{"x", false}, {"yyy", 42}, {"z", null}}),
-                Tuple.Create("-x -yyy -za", new ParseResult {{"x", true}, {"yyy", 42}, {"z", "a"}}),
-                Tuple.Create("-x -yyy -z a", new ParseResult {{"x", true}, {"yyy", 42}, {"z", "a"}})
+                {"", new ParseResult {{"x", false}, {"yyy", null}, {"z", null}}},
+                {"-x", new ParseResult {{"x", true}, {"yyy", null}, {"z", null}}},
+                {"-za", new ParseResult {{"x", false}, {"yyy", null}, {"z", "a"}}},
+                {"-z a", new ParseResult {{"x", false}, {"yyy", null}, {"z", "a"}}},
+                {"-xza", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}},
+                {"-xz a", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}},
+                {"-x -za", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}},
+                {"-x -z a", new ParseResult {{"x", true}, {"yyy", null}, {"z", "a"}}},
+                {"-y", new ParseResult {{"x", false}, {"yyy", 42}, {"z", null}}},
+                {"-yyy", new ParseResult {{"x", false}, {"yyy", 42}, {"z", null}}},
+                {"-x -yyy -za", new ParseResult {{"x", true}, {"yyy", 42}, {"z", "a"}}},
+                {"-x -yyy -z a", new ParseResult {{"x", true}, {"yyy", 42}, {"z", "a"}}}
             };
         }
     }

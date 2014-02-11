@@ -20,6 +20,14 @@ namespace Cr.ArgParse.Tests
             DefaultExceptionType = typeof (ParserException);
         }
 
+        protected class SuccessCollection : List<Tuple<string, ParseResult>>
+        {
+            public void Add(string argsStr, ParseResult expectedResult)
+            {
+                Add(Tuple.Create(argsStr, expectedResult));
+            }
+        }
+
         private class PartialTestCase
         {
             private string ParserTestCaseName { get; set; }

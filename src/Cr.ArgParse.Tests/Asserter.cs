@@ -1,8 +1,5 @@
-using System.Collections.Generic;
-using System.Linq;
 using Cr.ArgParse.Tests.Assertions;
 using NUnit.Framework;
-using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse.Tests
 {
@@ -34,7 +31,7 @@ namespace Cr.ArgParse.Tests
 
             public void AreEqual(ParseResult expected, ParseResult actual)
             {
-                AreEqual(expected.OfType<KeyValuePair<string, object>>().ToDictionary(expected.EqualityComparer), actual.OfType<KeyValuePair<string, object>>().ToDictionary(actual.EqualityComparer));
+                AreEqual(expected.ToDictionary(), expected.ToDictionary());
                 CollectionAssert.AreEqual(expected.UnrecognizedArguments, actual.UnrecognizedArguments,
                     "UnrecognizedArguments should be the same");
             }

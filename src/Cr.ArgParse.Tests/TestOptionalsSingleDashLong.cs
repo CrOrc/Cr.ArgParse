@@ -6,15 +6,15 @@ namespace Cr.ArgParse.Tests
     {
         public TestOptionalsSingleDashLong()
         {
-            ArgumentSignatures = new[] {new Argument {OptionStrings = new[] {"-foo"}}};
+            ArgumentSignatures = new[] {new Argument("-foo")};
             Failures = new[] {"-foo", "a", "--foo", "-foo --foo", "-foo -y", "-fooa"};
-            Successes = new[]
+            Successes = new SuccessCollection
             {
-                Tuple.Create("", new ParseResult {{"foo", null}}),
-                Tuple.Create("-foo a", new ParseResult {{"foo", "a"}}),
-                Tuple.Create("-foo -1", new ParseResult {{"foo", "-1"}}),
-                Tuple.Create("-fo a", new ParseResult {{"foo", "a"}}),
-                Tuple.Create("-f a", new ParseResult {{"foo", "a"}})
+                {"", new ParseResult {{"foo", null}}},
+                {"-foo a", new ParseResult {{"foo", "a"}}},
+                {"-foo -1", new ParseResult {{"foo", "-1"}}},
+                {"-fo a", new ParseResult {{"foo", "a"}}},
+                {"-f a", new ParseResult {{"foo", "a"}}}
             };
         }
     }
