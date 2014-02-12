@@ -350,7 +350,7 @@ namespace Cr.ArgParse.Tests
     {
         public TestOptionalsChoices()
         {
-            ArgumentSignatures = new[] {new Argument("-f"), new Argument("-g")};
+            ArgumentSignatures = new[] {new Argument("-f"), new Argument("-g") {Type = "int"}};
             Failures = new[] {"a", "-f d", "-fad", "-ga", "-g 6"};
             Successes = new SuccessCollection
             {
@@ -467,7 +467,7 @@ namespace Cr.ArgParse.Tests
                 new Argument("-w") {ValueCount = new ValueCount("?")},
                 new Argument("-x") {ConstValue = 42, ValueCount = new ValueCount("?")},
                 new Argument("-y") {ValueCount = new ValueCount("?")},
-                new Argument("-z") {ConstValue = "42", ValueCount = new ValueCount("?")}
+                new Argument("-z") {ConstValue = "42", ValueCount = new ValueCount("?"), Type = "int"}
             };
             Failures = new[] {"2"};
             Successes = new SuccessCollection

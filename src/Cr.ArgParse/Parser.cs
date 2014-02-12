@@ -13,16 +13,6 @@ namespace Cr.ArgParse
         public Parser(string description, IList<string> prefixes, string conflictHandlerName)
             : base(description, prefixes, conflictHandlerName)
         {
-            DefaultTypeFactory = argString => argString;
-            AddSimpleTypeFactories(new Dictionary<string, Type>
-            {
-                {"int", typeof (int)},
-                {"uint", typeof (uint)},
-                {"float", typeof (float)},
-                {"double", typeof (double)},
-                {"datetime", typeof (DateTime)},
-                {"timespan", typeof (TimeSpan)}
-            });
         }
 
         public Parser()
@@ -344,40 +334,6 @@ namespace Cr.ArgParse
 
             // return the converted value
             return value;
-        }
-
-        private readonly IDictionary<string, Func<string, object>> typeFactories =
-            new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
-
-        protected void AddSimpleTypeFactories(IEnumerable<KeyValuePair<string, Type>> typeFactoryPairs)
-        {
-            foreach (var kv in typeFactoryPairs)
-                AddTypeFactory(kv.Key, CreateSimpleTypeFactory(kv.Value));
-        }
-
-        private Func<string, object> CreateSimpleTypeFactory(Type targetType)
-        {
-            return argString => Convert.ChangeType(argString, targetType);
-        }
-
-        public void AddTypeFactory(string typeName, Func<string, object> typeFactory)
-        {
-            if (!string.IsNullOrEmpty(typeName))
-            {
-                typeFactories[typeName] = typeFactory;
-            }
-            else
-            {
-                if (typeFactory != null)
-                    DefaultTypeFactory = typeFactory;
-            }
-        }
-
-        private Func<string, object> DefaultTypeFactory { get; set; }
-
-        private Func<string, object> GetTypeFactory(string typeName)
-        {
-            return typeFactories.SafeGetValue(typeName, DefaultTypeFactory) ?? DefaultTypeFactory;
         }
 
         private object GetValue(ArgumentAction action, string argString)

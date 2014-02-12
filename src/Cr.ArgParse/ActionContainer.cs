@@ -19,6 +19,9 @@ namespace Cr.ArgParse
         private IList<string> prefixes;
         private readonly Regex negativeNumberMatcher;
 
+        private readonly IDictionary<string, Func<string, object>> typeFactories =
+            new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
+
         protected Regex NegativeNumberMatcher
         {
             get { return negativeNumberMatcher; }
@@ -31,6 +34,17 @@ namespace Cr.ArgParse
 
         public ActionContainer(string description, IList<string> prefixes, string conflictHandlerName)
         {
+            DefaultTypeFactory = argString => argString;
+            AddSimpleTypeFactories(new Dictionary<string, Type>
+            {
+                {"int", typeof (int)},
+                {"uint", typeof (uint)},
+                {"float", typeof (float)},
+                {"double", typeof (double)},
+                {"datetime", typeof (DateTime)},
+                {"timespan", typeof (TimeSpan)}
+            });
+
             Description = description;
             Prefixes = prefixes;
             ConflictHandlerName = conflictHandlerName;
@@ -126,6 +140,7 @@ namespace Cr.ArgParse
         }
 
         public IList<string> ShortPrefixes { get; private set; }
+        protected Func<string, object> DefaultTypeFactory { get; set; }
 
         public ArgumentAction AddArgument(Argument argument)
         {
@@ -261,6 +276,14 @@ namespace Cr.ArgParse
                 res.Destination = argument.OptionStrings.FirstOrDefault();
             }
 
+            if (!string.IsNullOrEmpty(res.Type))
+            {
+                if (!ReferenceEquals(res.ConstValue, null))
+                    res.ConstValue = GetTypeFactory(res.Type)(string.Format("{0}", res.ConstValue));
+                if (!ReferenceEquals(res.DefaultValue, null))
+                    res.DefaultValue = GetTypeFactory(res.Type)(string.Format("{0}", res.DefaultValue));
+            }
+
             res.OptionStrings = new string[] {};
             return res;
         }
@@ -281,6 +304,13 @@ namespace Cr.ArgParse
                 res.Destination =
                     StripPrefix(longOptionStrings.FirstOrDefault() ?? res.OptionStrings.FirstOrDefault());
             }
+            if (!string.IsNullOrEmpty(res.Type))
+            {
+                if (!ReferenceEquals(res.ConstValue, null))
+                    res.ConstValue = GetTypeFactory(res.Type)(string.Format("{0}", res.ConstValue));
+                if (!ReferenceEquals(res.DefaultValue, null))
+                    res.DefaultValue = GetTypeFactory(res.Type)(string.Format("{0}", res.DefaultValue));
+            }
             if (string.IsNullOrWhiteSpace(res.Destination))
                 throw new ParserException("Destination should be specified for options like " + res.OptionStrings[0]);
             return res;
@@ -294,6 +324,35 @@ namespace Cr.ArgParse
         protected List<ArgumentAction> GetPositionalActions()
         {
             return Actions.Where(it => !it.OptionStrings.Any()).ToList();
+        }
+
+        protected void AddSimpleTypeFactories(IEnumerable<KeyValuePair<string, Type>> typeFactoryPairs)
+        {
+            foreach (var kv in typeFactoryPairs)
+                AddTypeFactory(kv.Key, CreateSimpleTypeFactory(kv.Value));
+        }
+
+        private Func<string, object> CreateSimpleTypeFactory(Type targetType)
+        {
+            return argString => Convert.ChangeType(argString, targetType);
+        }
+
+        public void AddTypeFactory(string typeName, Func<string, object> typeFactory)
+        {
+            if (!string.IsNullOrEmpty(typeName))
+            {
+                typeFactories[typeName] = typeFactory;
+            }
+            else
+            {
+                if (typeFactory != null)
+                    DefaultTypeFactory = typeFactory;
+            }
+        }
+
+        protected Func<string, object> GetTypeFactory(string typeName)
+        {
+            return typeFactories.SafeGetValue(typeName, DefaultTypeFactory) ?? DefaultTypeFactory;
         }
     }
 }
