@@ -64,6 +64,7 @@
     <Compile Include="TestOptionalsSingleDashCombined.cs" />
     <Compile Include="TestOptionalsSingleDashLong.cs" />
     <Compile Include="TestOptionalsSingleDashSubsetAmbiguous.cs" />
+    <Compile Include="TestOptionalsSingleDoubleDash.cs" />
     <Compile Include="ValueCountTest.cs" />
   </ItemGroup>
   <ItemGroup>
