@@ -62,7 +62,7 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    [IgnoreCase] public class TestNargsZeroOrMore : ParserTestCase
+    public class TestNargsZeroOrMore : ParserTestCase
     {
         public TestNargsZeroOrMore()
         {
@@ -91,7 +91,7 @@ namespace Cr.ArgParse.Tests
         {
             ArgumentSignatures = new[]
             {
-                new Argument("-x"), new Argument("-3") {Destination = "y"},
+                new Argument("-x") {Type = "float"}, new Argument("-3") {Destination = "y", Type = "float"},
                 new Argument("z") {ValueCount = new ValueCount("*")}
             };
             Failures = new[]
@@ -116,8 +116,7 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    [IgnoreCase]
-    public class TestOptionalsActionAppend : ParserTestCase
+    [IgnoreCase] public class TestOptionalsActionAppend : ParserTestCase
     {
         public TestOptionalsActionAppend()
         {
@@ -132,8 +131,7 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    [IgnoreCase]
-    public class TestOptionalsActionAppendConst : ParserTestCase
+    [IgnoreCase] public class TestOptionalsActionAppendConst : ParserTestCase
     {
         public TestOptionalsActionAppendConst()
         {
@@ -155,8 +153,7 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    [IgnoreCase]
-    public class TestOptionalsActionAppendConstWithDefault : ParserTestCase
+    [IgnoreCase] public class TestOptionalsActionAppendConstWithDefault : ParserTestCase
     {
         public TestOptionalsActionAppendConstWithDefault()
         {
@@ -178,8 +175,7 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    [IgnoreCase]
-    public class TestOptionalsActionAppendWithDefault : ParserTestCase
+    [IgnoreCase] public class TestOptionalsActionAppendWithDefault : ParserTestCase
     {
         public TestOptionalsActionAppendWithDefault()
         {
