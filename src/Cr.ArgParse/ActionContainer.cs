@@ -256,6 +256,11 @@ namespace Cr.ArgParse
                     res.IsRequired = true;
             }
 
+            if (string.IsNullOrEmpty(res.Destination) && argument.OptionStrings.IsTrue())
+            {
+                res.Destination = argument.OptionStrings.FirstOrDefault();
+            }
+
             res.OptionStrings = new string[] {};
             return res;
         }
