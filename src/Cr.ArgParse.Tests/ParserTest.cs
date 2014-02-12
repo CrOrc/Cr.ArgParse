@@ -13,7 +13,9 @@ namespace Cr.ArgParse.Tests
          TestCaseSource(typeof (TestOptionalsSingleDashSubsetAmbiguous)),
          TestCaseSource(typeof (TestOptionalsSingleDashAmbiguous)),
          TestCaseSource(typeof (TestOptionalsNumeric)),
-         TestCaseSource(typeof (TestOptionalsDoubleDash))
+         TestCaseSource(typeof (TestOptionalsDoubleDash)),
+         TestCaseSource(typeof (TestOptionalsDoubleDashPartialMatch)),
+         TestCaseSource(typeof (TestOptionalsDoubleDashPrefixMatch))
         ] public void ParseArgumentsTest(Func<Parser> parserFactory,
             IEnumerable<string> args, ParseResult expectedResult, Type expectedExceptionType)
         {
