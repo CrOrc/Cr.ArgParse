@@ -1,4 +1,4 @@
-﻿namespace Cr.ArgParse
+﻿namespace Cr.ArgParse.Actions
 {
     public class StoreTrueAction : StoreConstAction
     {

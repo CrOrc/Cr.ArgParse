@@ -1,3 +1,4 @@
+using Cr.ArgParse.Actions;
 using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests

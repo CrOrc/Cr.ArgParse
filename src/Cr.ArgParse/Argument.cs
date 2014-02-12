@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cr.ArgParse.Actions;
 
 namespace Cr.ArgParse
 {
@@ -93,5 +94,10 @@ namespace Cr.ArgParse
         /// Count of values for this argument.
         /// </summary>
         public ValueCount ValueCount { get; set; }
+
+        /// <summary>
+        /// This argument should contain all remaining args
+        /// </summary>
+        public bool IsRemainder { get; set; }
     }
 }

@@ -36,17 +36,17 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Argument.cs" />
-    <Compile Include="ArgumentAction.cs" />
+    <Compile Include="Actions\ArgumentAction.cs" />
     <Compile Include="ActionContainer.cs" />
     <Compile Include="ArgumentError.cs" />
     <Compile Include="ArgumentGroup.cs" />
-    <Compile Include="CountAction.cs" />
+    <Compile Include="Actions\CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
     <Compile Include="ParserException.cs" />
-    <Compile Include="StoreConstAction.cs" />
-    <Compile Include="StoreFalseAction.cs" />
-    <Compile Include="StoreTrueAction.cs" />
+    <Compile Include="Actions\StoreConstAction.cs" />
+    <Compile Include="Actions\StoreFalseAction.cs" />
+    <Compile Include="Actions\StoreTrueAction.cs" />
     <Compile Include="UnrecognizedArgumentsException.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="Parser.cs" />
@@ -54,7 +54,7 @@
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="ParseResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StoreAction.cs" />
+    <Compile Include="Actions\StoreAction.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup />

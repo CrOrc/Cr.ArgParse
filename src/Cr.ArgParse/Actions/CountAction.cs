@@ -1,15 +1,13 @@
-﻿namespace Cr.ArgParse
+﻿namespace Cr.ArgParse.Actions
 {
-    public class StoreConstAction : ArgumentAction
+    public class CountAction : ArgumentAction
     {
         private readonly ValueCount valueCount;
 
-        public StoreConstAction(Argument argument)
-            : base(argument)
+        public CountAction(Argument argument) : base(argument)
         {
             valueCount = new ValueCount(0);
         }
-
 
         public override ValueCount ValueCount
         {
@@ -18,7 +16,7 @@
 
         public override void Call(ParseResult parseResult, object values, string optionString)
         {
-            parseResult[Destination] = ConstValue;
+            parseResult[Destination] = parseResult.GetArgument(Destination, 0) + 1;
         }
     }
 }

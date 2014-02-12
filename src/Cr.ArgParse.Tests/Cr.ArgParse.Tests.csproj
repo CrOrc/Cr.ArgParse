@@ -51,10 +51,13 @@
     <Compile Include="Assertions\ObjectExtensions.cs" />
     <Compile Include="Assertions\TypeExtensions.cs" />
     <Compile Include="BaseTest.cs" />
+    <Compile Include="TestCases.cs" />
+    <Compile Include="IgnoreCaseAttribute.cs" />
     <Compile Include="ParseResultTest.cs" />
     <Compile Include="ParserTest.cs" />
     <Compile Include="ParserTestCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SimpleParserTestCases.cs" />
     <Compile Include="TestOptionalsDoubleDash.cs" />
     <Compile Include="TestOptionalsDoubleDashPartialMatch.cs" />
     <Compile Include="TestOptionalsDoubleDashPrefixMatch.cs" />
@@ -65,6 +68,7 @@
     <Compile Include="TestOptionalsSingleDashLong.cs" />
     <Compile Include="TestOptionalsSingleDashSubsetAmbiguous.cs" />
     <Compile Include="TestOptionalsSingleDoubleDash.cs" />
+    <Compile Include="TestPrefixCharacterOnlyArguments.cs" />
     <Compile Include="ValueCountTest.cs" />
   </ItemGroup>
   <ItemGroup>

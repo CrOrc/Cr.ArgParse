@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Cr.ArgParse
+namespace Cr.ArgParse.Actions
 {
     public abstract class ArgumentAction
     {

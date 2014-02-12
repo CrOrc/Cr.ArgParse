@@ -10,7 +10,7 @@ namespace Cr.ArgParse.Tests
     {
         public IList<Argument> ArgumentSignatures { get; set; }
         public IList<string> Failures { get; set; }
-        public IList<Tuple<string, ParseResult>> Successes { get; set; }
+        public IList<Tuple<IList<string>, ParseResult>> Successes { get; set; }
         public Tuple<string, IList<string>, string> ParserSignature { get; set; }
 
         public Type DefaultExceptionType { get; set; }
@@ -20,11 +20,17 @@ namespace Cr.ArgParse.Tests
             DefaultExceptionType = typeof (ParserException);
         }
 
-        protected class SuccessCollection : List<Tuple<string, ParseResult>>
+        protected class SuccessCollection : List<Tuple<IList<string>, ParseResult>>
         {
             public void Add(string argsStr, ParseResult expectedResult)
             {
-                Add(Tuple.Create(argsStr, expectedResult));
+                Add(Tuple.Create(argsStr.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries) as IList<string>,
+                    expectedResult));
+            }
+
+            public void Add(IList<string> args, ParseResult expectedResult)
+            {
+                Add(Tuple.Create(args, expectedResult));
             }
         }
 
@@ -51,7 +57,7 @@ namespace Cr.ArgParse.Tests
 
             private string AddArgumentsName { get; set; }
 
-            private IList<Tuple<string, ParseResult>> Successes
+            private IList<Tuple<IList<string>, ParseResult>> Successes
             {
                 get { return ParserTestCase.Successes; }
             }
@@ -88,12 +94,12 @@ namespace Cr.ArgParse.Tests
                     Func<Parser> parserFactory =
                         () => cachedParsers[0] ?? (cachedParsers[0] = CreateParser());
 
-                    return (Successes ?? new Tuple<string, ParseResult>[] {}).Select(
+                    return (Successes ?? new Tuple<IList<string>, ParseResult>[] {}).Select(
                         success =>
                             new TestCaseData(parserFactory,
-                                success.Item1.Split(new char[] {}, StringSplitOptions.RemoveEmptyEntries), success.Item2,
+                                success.Item1, success.Item2,
                                 null)
-                                .SetName(FormatTestCaseName(success.Item1, "Success({0})")))
+                                .SetName(FormatTestCaseName(string.Join(" ",success.Item1.Select(it=>string.IsNullOrWhiteSpace(it)?string.Format("\"{0}\"",it):it)), "Success({0})")))
                         .Concat(
                             (Failures ?? new string[] {}).Select(
                                 argsStr =>

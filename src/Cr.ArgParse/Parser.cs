@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using Cr.ArgParse.Actions;
 using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse
@@ -15,12 +16,12 @@ namespace Cr.ArgParse
             DefaultTypeFactory = argString => argString;
             AddSimpleTypeFactories(new Dictionary<string, Type>
             {
-                {"int", typeof(int)},
-                {"uint",typeof(uint)},
-                {"float", typeof(float)},
-                {"double", typeof(double)},
-                {"datetime", typeof(DateTime)},
-                {"timespan", typeof(TimeSpan)}
+                {"int", typeof (int)},
+                {"uint", typeof (uint)},
+                {"float", typeof (float)},
+                {"double", typeof (double)},
+                {"datetime", typeof (DateTime)},
+                {"timespan", typeof (TimeSpan)}
             });
         }
 
@@ -222,6 +223,7 @@ namespace Cr.ArgParse
             Func<int, int> consumePositionals =
                 patternStartIndex =>
                 {
+                    if (patternStartIndex < 0) return patternStartIndex;
                     var selectedPattern = argStringPattern.Substring(patternStartIndex);
                     var argCounts = MatchArgumentsPartial(positionals, selectedPattern);
 
@@ -233,7 +235,9 @@ namespace Cr.ArgParse
                         patternStartIndex += it.argCount;
                         takeAction(it.action, actionArgs, null);
                     }
-                    positionals.RemoveRange(0, argCounts.Count);
+                    var toRemove = positionals.Count > argCounts.Count ? argCounts.Count : positionals.Count;
+                    if (toRemove > 0)
+                        positionals.RemoveRange(0, toRemove);
                     return patternStartIndex;
                 };
             extras = new List<string>();
@@ -345,7 +349,7 @@ namespace Cr.ArgParse
         private readonly IDictionary<string, Func<string, object>> typeFactories =
             new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
 
-        protected void AddSimpleTypeFactories(IEnumerable<KeyValuePair<string, Type>>  typeFactoryPairs)
+        protected void AddSimpleTypeFactories(IEnumerable<KeyValuePair<string, Type>> typeFactoryPairs)
         {
             foreach (var kv in typeFactoryPairs)
                 AddTypeFactory(kv.Key, CreateSimpleTypeFactory(kv.Value));
