@@ -35,6 +35,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actions\AppendAction.cs" />
+    <Compile Include="Actions\AppendConstAction.cs" />
     <Compile Include="Argument.cs" />
     <Compile Include="Actions\ArgumentAction.cs" />
     <Compile Include="ActionContainer.cs" />

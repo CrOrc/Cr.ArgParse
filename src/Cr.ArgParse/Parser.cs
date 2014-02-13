@@ -155,8 +155,7 @@ namespace Cr.ArgParse
                             //if the action is a single-dash option and takes no
                             // arguments, try to parse more single-dash options out
                             // of the tail of the option string
-                            if (argCount == 0 && optionString.StartsWith(ShortPrefixes) &&
-                                !optionString.StartsWith(LongPrefixes))
+                            if (argCount == 0 && StartsWithShortPrefix(optionString))
                             {
                                 actionTuples.Add(action, new string[] {}, optionString);
                                 var prefix = optionString.Substring(0, 1);
@@ -439,7 +438,7 @@ namespace Cr.ArgParse
             // if it's an empty string, it was meant to be a positional
             if (string.IsNullOrEmpty(argString)) return null;
             // if it doesn't start with a prefix, it was meant to be positional
-            if (!argString.StartsWith(Prefixes))
+            if (!StartsWithPrefix(argString))
                 return null;
             // if the option string is present in the parser, return the action
             ArgumentAction action;
@@ -494,7 +493,7 @@ namespace Cr.ArgParse
             string optionPrefix;
             // option strings starting with two prefix characters are only
             // split at the '='
-            if (optionString.StartsWith(LongPrefixes))
+            if (StartsWithLongPrefix(optionString))
             {
                 string explicitArg;
                 if (optionString.Contains('='))
@@ -515,7 +514,7 @@ namespace Cr.ArgParse
                 // single character options can be concatenated with their arguments
                 // but multiple character options always have to have their argument
                 // separate
-            else if (optionString.StartsWith(ShortPrefixes) && !optionString.StartsWith(LongPrefixes))
+            else if (StartsWithShortPrefix(optionString))
             {
                 optionPrefix = optionString;
                 var shortOptionPrefix = optionString.Substring(0, 2);

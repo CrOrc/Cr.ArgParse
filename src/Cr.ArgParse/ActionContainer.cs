@@ -34,6 +34,9 @@ namespace Cr.ArgParse
 
         public ActionContainer(string description, IList<string> prefixes, string conflictHandlerName)
         {
+
+            typeFactories =
+            new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
             DefaultTypeFactory = argString => argString;
             AddSimpleTypeFactories(new Dictionary<string, Type>
             {
@@ -58,7 +61,9 @@ namespace Cr.ArgParse
                 {"store_const", arg => new StoreConstAction(arg)},
                 {"store_true", arg => new StoreTrueAction(arg)},
                 {"store_false", arg => new StoreFalseAction(arg)},
-                {"count", arg => new CountAction(arg)}
+                {"count", arg => new CountAction(arg)},
+                {"append", arg => new AppendAction(arg)},
+                {"append_const", arg => new AppendConstAction(arg)},
             });
 
             //check conflict resolving
@@ -154,17 +159,17 @@ namespace Cr.ArgParse
             return AddAction(argumentAction);
         }
 
-        private bool StartsWithPrefix(string optionString)
+        protected bool StartsWithPrefix(string optionString)
         {
             return optionString.StartsWith(Prefixes);
         }
 
-        private bool StartsWithShortPrefix(string optionString)
+        protected bool StartsWithShortPrefix(string optionString)
         {
             return optionString.StartsWith(ShortPrefixes) && !optionString.StartsWith(LongPrefixes);
         }
 
-        private bool StartsWithLongPrefix(string optionString)
+        protected bool StartsWithLongPrefix(string optionString)
         {
             return optionString.StartsWith(LongPrefixes);
         }

@@ -10,7 +10,6 @@
             valueCount = new ValueCount(0);
         }
 
-
         public override ValueCount ValueCount
         {
             get { return valueCount; }
