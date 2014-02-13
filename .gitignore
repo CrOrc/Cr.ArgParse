@@ -114,3 +114,5 @@ tmp/
 *~
 *.userprefs
 *.resources
+*.VisualState.xml
+TestResult.xml
