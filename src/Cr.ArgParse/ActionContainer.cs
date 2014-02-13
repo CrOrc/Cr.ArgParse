@@ -86,7 +86,7 @@ namespace Cr.ArgParse
         public IList<ArgumentGroup> ActionGroups { get; private set; }
         public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
 
-        public ArgumentGroup AddArgumentGroup(string title, string description=null)
+        public ArgumentGroup AddArgumentGroup(string title, string description = null)
         {
             var group = new ArgumentGroup(this, title, description ?? title);
             ActionGroups.Add(group);
@@ -144,17 +144,36 @@ namespace Cr.ArgParse
 
         public ArgumentAction AddArgument(Argument argument)
         {
-            var localPrefixes = Prefixes;
-            Argument preparedArgument;
-            if (argument.OptionStrings.IsNullOrEmpty() ||
-                argument.OptionStrings.Count == 1 && !argument.OptionStrings[0].StartsWith(localPrefixes))
-                preparedArgument = PreparePositionalArgument(argument);
-            else
-                preparedArgument = PrepareOptionalArgument(argument);
+            var preparedArgument =
+                !IsOptionalArgument(argument)
+                    ? PreparePositionalArgument(argument)
+                    : PrepareOptionalArgument(argument);
             var argumentAction = CreateAction(preparedArgument);
             if (ReferenceEquals(argumentAction, null))
                 throw new ParserException("Unregistered action exception");
             return AddAction(argumentAction);
+        }
+
+        private bool StartsWithPrefix(string optionString)
+        {
+            return optionString.StartsWith(Prefixes);
+        }
+
+        private bool StartsWithShortPrefix(string optionString)
+        {
+            return optionString.StartsWith(ShortPrefixes) && !optionString.StartsWith(LongPrefixes);
+        }
+
+        private bool StartsWithLongPrefix(string optionString)
+        {
+            return optionString.StartsWith(LongPrefixes);
+        }
+
+        private bool IsOptionalArgument(Argument argument)
+        {
+            return argument.OptionStrings.IsTrue() &&
+                   (argument.OptionStrings.Count != 1 ||
+                    StartsWithPrefix(argument.OptionStrings[0]));
         }
 
         private Action<ArgumentAction, IEnumerable<KeyValuePair<string, ArgumentAction>>> GetConflictHandler()
@@ -256,7 +275,7 @@ namespace Cr.ArgParse
 
         private Argument PreparePositionalArgument(Argument argument)
         {
-            var res = new Argument(argument);
+            var res = new Argument(argument, new string[] {});
             if (ReferenceEquals(res.ValueCount, null))
                 res.ValueCount = new ValueCount(1);
             // mark positional arguments as required if at least one is always required
@@ -272,47 +291,25 @@ namespace Cr.ArgParse
             }
 
             if (string.IsNullOrEmpty(res.Destination) && argument.OptionStrings.IsTrue())
-            {
                 res.Destination = argument.OptionStrings.FirstOrDefault();
-            }
 
-            if (!string.IsNullOrEmpty(res.Type))
-            {
-                if (!ReferenceEquals(res.ConstValue, null))
-                    res.ConstValue = GetTypeFactory(res.Type)(string.Format("{0}", res.ConstValue));
-                if (!ReferenceEquals(res.DefaultValue, null))
-                    res.DefaultValue = GetTypeFactory(res.Type)(string.Format("{0}", res.DefaultValue));
-            }
-
-            res.OptionStrings = new string[] {};
             return res;
         }
 
         private Argument PrepareOptionalArgument(Argument argument)
         {
-            var res = new Argument(argument)
-            {
-                OptionStrings =
-                    (argument.OptionStrings ?? new string[] {}).Where(it => it.StartsWith(Prefixes)).ToList()
-            };
+            var res = new Argument(argument, (argument.OptionStrings ?? new string[] {}).Where(StartsWithPrefix));
             if (!res.OptionStrings.Any())
                 throw new Exception("Optional argument should have name starting with prefix");
             // infer destination
             if (string.IsNullOrWhiteSpace(res.Destination) && res.OptionStrings.Any())
-            {
-                var longOptionStrings = res.OptionStrings.Where(it => it.StartsWith(LongPrefixes)).Take(1).ToList();
                 res.Destination =
-                    StripPrefix(longOptionStrings.FirstOrDefault() ?? res.OptionStrings.FirstOrDefault());
-            }
-            if (!string.IsNullOrEmpty(res.Type))
-            {
-                if (!ReferenceEquals(res.ConstValue, null))
-                    res.ConstValue = GetTypeFactory(res.Type)(string.Format("{0}", res.ConstValue));
-                if (!ReferenceEquals(res.DefaultValue, null))
-                    res.DefaultValue = GetTypeFactory(res.Type)(string.Format("{0}", res.DefaultValue));
-            }
+                    StripPrefix(res.OptionStrings.FirstOrDefault(StartsWithLongPrefix) ??
+                                res.OptionStrings.FirstOrDefault());
+
             if (string.IsNullOrWhiteSpace(res.Destination))
                 throw new ParserException("Destination should be specified for options like " + res.OptionStrings[0]);
+            res.Destination = res.Destination.Replace('-', '_');
             return res;
         }
 

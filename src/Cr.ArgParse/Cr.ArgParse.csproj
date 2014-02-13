@@ -47,6 +47,7 @@
     <Compile Include="Actions\StoreConstAction.cs" />
     <Compile Include="Actions\StoreFalseAction.cs" />
     <Compile Include="Actions\StoreTrueAction.cs" />
+    <Compile Include="RequiredArgumentsException.cs" />
     <Compile Include="UnrecognizedArgumentsException.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="Parser.cs" />

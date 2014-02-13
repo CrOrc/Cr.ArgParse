@@ -22,32 +22,36 @@ namespace Cr.ArgParse
 
         public ParseResult ParseArguments(IEnumerable<string> args, ParseResult parseResult = null)
         {
+            //parse the arguments and exit if there are any errors
+            parseResult = ParseKnowArguments(args, parseResult);
+            if (parseResult.UnrecognizedArguments != null && parseResult.UnrecognizedArguments.Any())
+                throw new UnrecognizedArgumentsException(parseResult.UnrecognizedArguments);
+            return parseResult;
+        }
+
+        public ParseResult ParseKnowArguments(IEnumerable<string> args, ParseResult parseResult)
+        {
             if (parseResult == null)
                 parseResult = new ParseResult();
             //add any action defaults that aren't present
             foreach (var action in Actions)
             {
                 //if action.dest is not SUPPRESS:
-                if (action.Destination != null)
+                if (action.HasDestination)
                 {
                     var res = parseResult[action.Destination];
                     if (ReferenceEquals(res, null))
                         //if action.default is not SUPPRESS:
-                        if (!ReferenceEquals(action.DefaultValue, null) || action.Argument.Type == null)
+                        if (action.HasDefaultValue)
                             parseResult[action.Destination] = action.DefaultValue;
                 }
             }
 
-            //parse the arguments and exit if there are any errors
-            parseResult = ParseKnowArguments(args, parseResult);
-            if (parseResult.UnrecognizedArguments != null && parseResult.UnrecognizedArguments.Any())
-            {
-                throw new UnrecognizedArgumentsException(parseResult.UnrecognizedArguments);
-            }
+            parseResult = ParseKnowArgumentsInternal(args, parseResult);
             return parseResult;
         }
 
-        public ParseResult ParseKnowArguments(IEnumerable<string> args, ParseResult parseResult)
+        internal ParseResult ParseKnowArgumentsInternal(IEnumerable<string> args, ParseResult parseResult)
         {
             var argStrings = args.ToList();
             //map all mutually exclusive arguments to the other arguments they can't occur with
@@ -266,6 +270,33 @@ namespace Cr.ArgParse
 
             if (extras.Any())
                 parseResult.UnrecognizedArguments = extras;
+
+            // make sure all required actions were present and also convert
+            // action defaults which were not given as arguments
+            var requiredActions = new List<ArgumentAction>();
+            foreach (var action in Actions)
+            {
+                if (!seenActions.Contains(action))
+                {
+                    if (action.IsRequired)
+                        requiredActions.Add(action);
+                    else
+                    {
+                        // Convert action default now instead of doing it before
+                        // parsing arguments to avoid calling convert functions
+                        // twice (which may fail) if the argument was given, but
+                        // only if it was defined already in the namespace
+                        if (action.HasDefaultValue && !ReferenceEquals(action.DefaultValue, null) &&
+                            action.DefaultValue is string &&
+                            parseResult.GetArgument<string>(action.Destination) == action.DefaultValue)
+                            parseResult[action.Destination] = GetValue(action, (string) action.DefaultValue);
+                    }
+                }
+            }
+
+            if (requiredActions.IsTrue())
+                throw new RequiredArgumentsException(requiredActions);
+
             return parseResult;
         }
 
@@ -338,7 +369,7 @@ namespace Cr.ArgParse
 
         private object GetValue(ArgumentAction action, string argString)
         {
-            var typeFactory = GetTypeFactory(action.Type);
+            var typeFactory = GetTypeFactory(action.TypeName);
             try
             {
                 return typeFactory(argString);
@@ -346,7 +377,7 @@ namespace Cr.ArgParse
             catch (Exception err)
             {
                 throw new ArgumentError(action,
-                    string.Format("Invalid type \"{0}\" for value \"{1}\"", action.Type, argString), err);
+                    string.Format("Invalid type \"{0}\" for value \"{1}\"", action.TypeName, argString), err);
             }
         }
 
@@ -398,7 +429,7 @@ namespace Cr.ArgParse
                 : (action.IsParser
                     ? "(-*A[-AO]*)"
                     : string.Format("(-*(?:A-*){0})", action.ValueCount ?? new ValueCount(1)));
-            if (action.OptionStrings.Any())
+            if (action.OptionStrings.IsTrue())
                 res = res.Replace("-*", "").Replace("-", "");
             return res;
         }

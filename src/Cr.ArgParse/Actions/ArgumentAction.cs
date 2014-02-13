@@ -40,14 +40,29 @@ namespace Cr.ArgParse.Actions
             get { return Argument.ValueCount; }
         }
 
-        public string Type
+        public string TypeName
         {
-            get { return Argument.Type; }
+            get { return Argument.TypeName; }
         }
 
         public bool IsOptional
         {
             get { return ValueCount != null && ValueCount.Min == 0 && ValueCount.Max == 1; }
+        }
+
+        public virtual bool HasDestination
+        {
+            get { return true; }
+        }
+
+        public virtual bool HasDefaultValue
+        {
+            get { return !Argument.SuppressDefaultValue; }
+        }
+
+        public bool HasValidDestination
+        {
+            get { return !string.IsNullOrWhiteSpace(Destination); }
         }
 
         public bool IsParser { get; set; }

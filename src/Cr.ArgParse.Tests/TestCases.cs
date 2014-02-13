@@ -2,29 +2,6 @@
 
 namespace Cr.ArgParse.Tests
 {
-    public class TestDefaultSuppress : ParserTestCase
-    {
-        public TestDefaultSuppress()
-        {
-            ArgumentSignatures = new[]
-            {
-                new Argument("foo") {DefaultValue = "==SUPPRESS==", ValueCount = new ValueCount("?")},
-                new Argument("bar") {DefaultValue = "==SUPPRESS==", ValueCount = new ValueCount("*")},
-                new Argument("--baz") {ActionName = "store_true", DefaultValue = "==SUPPRESS=="}
-            };
-            Failures = new[] {"-x"};
-            Successes = new SuccessCollection
-            {
-                {"", new ParseResult {}},
-                {"a", new ParseResult {{"foo", "a"}}},
-                {"a b", new ParseResult {{"bar", new[] {"b"}}, {"foo", "a"}}},
-                {"--baz", new ParseResult {{"baz", true}}},
-                {"a --baz", new ParseResult {{"baz", true}, {"foo", "a"}}},
-                {"--baz a b", new ParseResult {{"bar", new[] {"b"}}, {"baz", true}, {"foo", "a"}}}
-            };
-        }
-    }
-
     public class TestEmptyAndSpaceContainingArguments : ParserTestCase
     {
         public TestEmptyAndSpaceContainingArguments()
@@ -91,7 +68,7 @@ namespace Cr.ArgParse.Tests
         {
             ArgumentSignatures = new[]
             {
-                new Argument("-x") {Type = "float"}, new Argument("-3") {Destination = "y", Type = "float"},
+                new Argument("-x") {TypeName = "float"}, new Argument("-3") {Destination = "y", TypeName = "float"},
                 new Argument("z") {ValueCount = new ValueCount("*")}
             };
             Failures = new[]
@@ -355,7 +332,7 @@ namespace Cr.ArgParse.Tests
     {
         public TestOptionalsChoices()
         {
-            ArgumentSignatures = new[] {new Argument("-f"), new Argument("-g") {Type = "int"}};
+            ArgumentSignatures = new[] {new Argument("-f"), new Argument("-g") {TypeName = "int"}};
             Failures = new[] {"a", "-f d", "-fad", "-ga", "-g 6"};
             Successes = new SuccessCollection
             {
@@ -477,7 +454,7 @@ namespace Cr.ArgParse.Tests
                     ConstValue = "42",
                     DefaultValue = "84",
                     ValueCount = new ValueCount("?"),
-                    Type = "int"
+                    TypeName = "int"
                 }
             };
             Failures = new[] {"2"};
@@ -543,7 +520,7 @@ namespace Cr.ArgParse.Tests
     {
         public TestOptionalsRequired()
         {
-            ArgumentSignatures = new[] {new Argument("-x") {Type = "int"}};
+            ArgumentSignatures = new[] {new Argument("-x") {TypeName = "int"}};
             Failures = new[] {"a", ""};
             Successes = new SuccessCollection
             {
@@ -614,7 +591,7 @@ namespace Cr.ArgParse.Tests
     {
         public TestPositionalsChoicesInt()
         {
-            ArgumentSignatures = new[] {new Argument("spam") {Type = "int"}};
+            ArgumentSignatures = new[] {new Argument("spam") {TypeName = "int"}};
             Failures = new[] {"", "--foo", "h", "42", "ef"};
             Successes = new SuccessCollection
             {
@@ -931,7 +908,7 @@ namespace Cr.ArgParse.Tests
         public TestPositionalsNargsOptionalConvertedDefault()
         {
             ArgumentSignatures = new[]
-            {new Argument("foo") {DefaultValue = "42", ValueCount = new ValueCount("?"), Type = "int"}};
+            {new Argument("foo") {DefaultValue = "42", ValueCount = new ValueCount("?"), TypeName = "int"}};
             Failures = new[] {"-x", "a b", "1 2"};
             Successes = new SuccessCollection
             {

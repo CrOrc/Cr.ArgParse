@@ -14,20 +14,21 @@ namespace Cr.ArgParse
         {
         }
 
-        public Argument(Argument argument)
+        public Argument(Argument argument, IEnumerable<string> optionStrings = null)
+            : this(optionStrings ?? (argument != null ? argument.OptionStrings : null))
         {
             if (ReferenceEquals(argument, null)) return;
-            OptionStrings = argument.OptionStrings;
+            ActionFactory = argument.ActionFactory;
+            ActionName = argument.ActionName;
+            ConstValue = argument.ConstValue;
+            DefaultValue = argument.DefaultValue;
             Destination = argument.Destination;
             HelpText = argument.HelpText;
-            ActionName = argument.ActionName;
-            ActionFactory = argument.ActionFactory;
-            ValueCount = argument.ValueCount;
+            IsRemainder = argument.IsRemainder;
             IsRequired = argument.IsRequired;
-            DefaultValue = argument.DefaultValue;
-            ConstValue = argument.ConstValue;
             MetaVariable = argument.MetaVariable;
-            Type = argument.Type;
+            TypeName = argument.TypeName;
+            ValueCount = argument.ValueCount;
         }
 
         public Argument(params string[] optionStrings) : this(optionStrings as IEnumerable<string>)
@@ -70,6 +71,13 @@ namespace Cr.ArgParse
         /// </summary>
         public string HelpText { get; set; }
 
+        public bool SuppressDefaultValue { get; set; }
+
+        /// <summary>
+        /// This argument should contain all remaining args
+        /// </summary>
+        public bool IsRemainder { get; set; }
+
         /// <summary>
         /// Is argument required.
         /// </summary>
@@ -83,21 +91,16 @@ namespace Cr.ArgParse
         /// <summary>
         /// strings to identify argument. Empty for positional arguments.
         /// </summary>
-        public IList<string> OptionStrings { get; set; }
+        public IList<string> OptionStrings { get; private set; }
 
         /// <summary>
         /// Name argument type
         /// </summary>
-        public string Type { get; set; }
+        public string TypeName { get; set; }
 
         /// <summary>
         /// Count of values for this argument.
         /// </summary>
         public ValueCount ValueCount { get; set; }
-
-        /// <summary>
-        /// This argument should contain all remaining args
-        /// </summary>
-        public bool IsRemainder { get; set; }
     }
 }
