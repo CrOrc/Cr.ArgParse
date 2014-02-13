@@ -59,6 +59,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleParserTestCases.cs" />
     <Compile Include="TestDefaultSuppress.cs" />
+    <Compile Include="TestOptionalsAlternatePrefixChars.cs" />
+    <Compile Include="TestOptionalsAlternatePrefixCharsAddedHelp.cs" />
+    <Compile Include="TestOptionalsAlternatePrefixCharsMultipleShortArgs.cs" />
     <Compile Include="TestOptionalsDoubleDash.cs" />
     <Compile Include="TestOptionalsDoubleDashPartialMatch.cs" />
     <Compile Include="TestOptionalsDoubleDashPrefixMatch.cs" />
