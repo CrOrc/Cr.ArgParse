@@ -263,24 +263,6 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    public class TestOptionalsChoices : ParserTestCase
-    {
-        public TestOptionalsChoices()
-        {
-            ArgumentSignatures = new[] {new Argument("-f"), new Argument("-g") {TypeName = "int"}};
-            Failures = new[] {"a", "-f d", "-fad", "-ga", "-g 6"};
-            Successes = new SuccessCollection
-            {
-                {"", new ParseResult {{"f", null}, {"g", null}}},
-                {"-f a", new ParseResult {{"f", "a"}, {"g", null}}},
-                {"-f c", new ParseResult {{"f", "c"}, {"g", null}}},
-                {"-g 0", new ParseResult {{"f", null}, {"g", 0}}},
-                {"-g 03", new ParseResult {{"f", null}, {"g", 3}}},
-                {"-fb -g4", new ParseResult {{"f", "b"}, {"g", 4}}}
-            };
-        }
-    }
-
     public class TestOptionalsDefault : ParserTestCase
     {
         public TestOptionalsDefault()
@@ -447,20 +429,6 @@ namespace Cr.ArgParse.Tests
                 {"a", new ParseResult {{"x", "a"}, {"y", false}}},
                 {"-4", new ParseResult {{"x", null}, {"y", true}}},
                 {"-4 a", new ParseResult {{"x", "a"}, {"y", true}}}
-            };
-        }
-    }
-
-    public class TestOptionalsRequired : ParserTestCase
-    {
-        public TestOptionalsRequired()
-        {
-            ArgumentSignatures = new[] {new Argument("-x") {TypeName = "int"}};
-            Failures = new[] {"a", ""};
-            Successes = new SuccessCollection
-            {
-                {"-x 1", new ParseResult {{"x", 1}}},
-                {"-x42", new ParseResult {{"x", 42}}}
             };
         }
     }

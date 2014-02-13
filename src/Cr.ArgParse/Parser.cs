@@ -416,7 +416,7 @@ namespace Cr.ArgParse
                 var pattern = "^" + string.Concat(actionsSlice.Select(GetValueCountPattern));
                 var match = Regex.Match(argStringsPattern, pattern);
                 if (!match.Success) continue;
-                res.AddRange(match.Groups.OfType<Group>().Select(it => it.Length));
+                res.AddRange(match.Groups.OfType<Group>().Skip(1).Select(it => it.Length));
                 break;
             }
             return res;

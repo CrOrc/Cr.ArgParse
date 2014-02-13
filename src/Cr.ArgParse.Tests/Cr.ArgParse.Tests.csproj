@@ -62,10 +62,12 @@
     <Compile Include="TestOptionalsAlternatePrefixChars.cs" />
     <Compile Include="TestOptionalsAlternatePrefixCharsAddedHelp.cs" />
     <Compile Include="TestOptionalsAlternatePrefixCharsMultipleShortArgs.cs" />
+    <Compile Include="TestOptionalsChoices.cs" />
     <Compile Include="TestOptionalsDoubleDash.cs" />
     <Compile Include="TestOptionalsDoubleDashPartialMatch.cs" />
     <Compile Include="TestOptionalsDoubleDashPrefixMatch.cs" />
     <Compile Include="TestOptionalsNumeric.cs" />
+    <Compile Include="TestOptionalsRequired.cs" />
     <Compile Include="TestOptionalsSingleDash.cs" />
     <Compile Include="TestOptionalsSingleDashAmbiguous.cs" />
     <Compile Include="TestOptionalsSingleDashCombined.cs" />
