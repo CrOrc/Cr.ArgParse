@@ -72,7 +72,7 @@ namespace Cr.ArgParse
             actions = new List<ArgumentAction>();
 
             optionStringActions =
-                new Dictionary<string, ArgumentAction>(StringComparer.InvariantCultureIgnoreCase);
+                new Dictionary<string, ArgumentAction>(StringComparer.InvariantCulture);
 
             //groups
             ActionGroups = new List<ArgumentGroup>();
