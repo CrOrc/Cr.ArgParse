@@ -344,7 +344,7 @@ namespace Cr.ArgParse
                 CheckValue(action, value);
             }
                 // single argument or optional argument produces a single value
-            else if (argStrings.Count == 1 && (action.ValueCount == null || action.IsOptional))
+            else if (argStrings.Count == 1 && (action.ValueCount == null || action.IsOptional) && !action.IsRemainder && !action.IsParser)
             {
                 value = GetValue(action, argStrings[0]);
                 CheckValue(action, value);

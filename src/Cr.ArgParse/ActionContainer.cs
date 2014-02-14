@@ -285,11 +285,9 @@ namespace Cr.ArgParse
         private Argument PreparePositionalArgument(Argument argument)
         {
             var res = new Argument(argument, new string[] {});
-            if (ReferenceEquals(res.ValueCount, null))
-                res.ValueCount = new ValueCount(1);
             // mark positional arguments as required if at least one is always required
             var valueCount = res.ValueCount;
-            if (valueCount.Min.HasValue && valueCount.Min > 0)
+            if (valueCount == null || valueCount.Min.HasValue && valueCount.Min > 0)
                 res.IsRequired = true;
             else
             {

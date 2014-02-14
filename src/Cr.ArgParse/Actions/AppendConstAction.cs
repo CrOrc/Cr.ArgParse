@@ -23,7 +23,7 @@ namespace Cr.ArgParse.Actions
             var newValues =
                 parseResult.GetArgument<IEnumerable>(Destination, new object[] {})
                     .Cast<object>()
-                    .Concat(new[] {values})
+                    .Concat(new[] {ConstValue})
                     .ToList();
             parseResult[Destination] = newValues;
         }
