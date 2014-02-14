@@ -1,4 +1,4 @@
-﻿namespace Cr.ArgParse.Tests.TestCases.Positionals
+﻿namespace Cr.ArgParse.Tests.TestCases
 {
     public class TestPositionalsChoicesString : ParserTestCase
     {

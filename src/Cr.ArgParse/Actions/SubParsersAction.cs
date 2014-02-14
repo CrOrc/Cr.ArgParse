@@ -16,6 +16,11 @@ namespace Cr.ArgParse.Actions
             subParsers = new SortedDictionary<string, IArgumentParser>(StringComparer.InvariantCulture);
         }
 
+        public override bool IsParser
+        {
+            get { return true; }
+        }
+
         public override void Call(ParseResult parseResult, object values, string optionString)
         {
             var valueStrings = (values as IEnumerable ?? new string[] {}).OfType<string>().ToList();
@@ -27,7 +32,7 @@ namespace Cr.ArgParse.Actions
             var parser = subParsers.SafeGetValue(parserName);
             if (parser == null)
                 throw new UnknownParserException(this, parserName);
-            
+
             // parse all the remaining options into the namespace
             // store any unrecognized options on the object, so that the top
             // level parser can decide what to do with them

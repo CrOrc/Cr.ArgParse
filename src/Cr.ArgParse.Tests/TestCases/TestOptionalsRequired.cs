@@ -1,4 +1,4 @@
-namespace Cr.ArgParse.Tests.TestCases.Optionals
+namespace Cr.ArgParse.Tests.TestCases
 {
     public class TestOptionalsRequired : ParserTestCase
     {

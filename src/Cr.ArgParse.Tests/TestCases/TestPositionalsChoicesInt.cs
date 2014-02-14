@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Cr.ArgParse.Tests.TestCases.Positionals
+namespace Cr.ArgParse.Tests.TestCases
 {
     public class TestPositionalsChoicesInt : ParserTestCase
     {

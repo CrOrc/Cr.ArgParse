@@ -40,7 +40,10 @@ namespace Cr.ArgParse.Actions
             get { return Argument.ValueCount; }
         }
 
-        public IList<object> Choices{get { return Argument.Choices; }}
+        public IList<object> Choices
+        {
+            get { return Argument.Choices; }
+        }
 
         public string TypeName
         {
@@ -67,8 +70,15 @@ namespace Cr.ArgParse.Actions
             get { return !string.IsNullOrWhiteSpace(Destination); }
         }
 
-        public bool IsParser { get; set; }
-        public bool IsRemainder { get; set; }
+        public virtual bool IsParser
+        {
+            get { return false; }
+        }
+
+        public bool IsRemainder
+        {
+            get { return Argument.IsRemainder; }
+        }
 
         public abstract void Call(ParseResult parseResult, object values, string optionString);
     }

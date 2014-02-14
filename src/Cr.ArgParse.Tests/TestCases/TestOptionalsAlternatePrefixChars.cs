@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Cr.ArgParse.Tests.TestCases.Optionals
+namespace Cr.ArgParse.Tests.TestCases
 {
     public class TestOptionalsAlternatePrefixChars : ParserTestCase
     {
