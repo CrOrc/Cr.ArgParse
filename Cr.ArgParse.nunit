@@ -1,9 +1,9 @@
 ﻿<NUnitProject>
   <Settings activeconfig="Release" />
   <Config name="Debug" binpathtype="Auto">
-    <assembly path="src\Cr.ArgParse.Tests\bin\Debug\Cr.ArgParse.Tests.dll" />
+    <assembly path="src/Cr.ArgParse.Tests/bin/Debug/Cr.ArgParse.Tests.dll" />
   </Config>
   <Config name="Release" binpathtype="Auto">
-    <assembly path="src\Cr.ArgParse.Tests\bin\Release\Cr.ArgParse.Tests.dll" />
+    <assembly path="src/Cr.ArgParse.Tests/bin/Release/Cr.ArgParse.Tests.dll" />
   </Config>
 </NUnitProject>
