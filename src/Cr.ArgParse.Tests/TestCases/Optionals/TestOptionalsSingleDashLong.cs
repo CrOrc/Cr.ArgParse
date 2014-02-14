@@ -1,6 +1,4 @@
-using System;
-
-namespace Cr.ArgParse.Tests
+namespace Cr.ArgParse.Tests.TestCases.Optionals
 {
     public class TestOptionalsSingleDashLong : ParserTestCase
     {

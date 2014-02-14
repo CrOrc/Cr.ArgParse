@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace Cr.ArgParse.Tests
+namespace Cr.ArgParse.Tests.TestCases.Optionals
 {
     public class TestOptionalsAlternatePrefixChars : ParserTestCase
     {
@@ -13,8 +15,7 @@ namespace Cr.ArgParse.Tests
                 new Argument("+f") {ActionName = "store_true"}, new Argument("::bar"),
                 new Argument("/baz") {ActionName = "store_const", ConstValue = 42}
             };
-            Failures = new[]
-            {"--bar", "-fbar", "-b B", "B", "-f", "--bar B", "-baz", "-h", "--help", "+h", "::help", "/help"};
+            Failures = new[] { "--bar", "-fbar", "-b B", "B", "-f", "--bar B", "-baz", "-h", "--help", "+h", "::help", "/help" };
             Successes = new SuccessCollection
             {
                 {"", new ParseResult {{"bar", null}, {"baz", null}, {"f", false}}},

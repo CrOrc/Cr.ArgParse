@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Cr.ArgParse.Tests
+namespace Cr.ArgParse.Tests.TestCases.Optionals
 {
     public class TestOptionalsAlternatePrefixCharsAddedHelp : ParserTestCase
     {

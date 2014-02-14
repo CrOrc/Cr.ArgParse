@@ -122,17 +122,17 @@ namespace Cr.ArgParse
         public string DefaultAction { get; set; }
         public string Description { get; set; }
 
-        public IList<string> LongPrefixes { get; private set; }
+        public virtual IList<string> LongPrefixes { get; private set; }
 
         public virtual IDictionary<string, Action> OptionStringActions
         {
             get { return optionStringActions; }
         }
 
-        public IList<string> Prefixes
+        public virtual IList<string> Prefixes
         {
             get { return prefixes; }
-            set
+            private set
             {
                 if (value == null)
                     throw new ArgumentNullException("value");
@@ -147,7 +147,7 @@ namespace Cr.ArgParse
             }
         }
 
-        public IList<string> ShortPrefixes { get; private set; }
+        public virtual IList<string> ShortPrefixes { get; private set; }
         protected Func<string, object> DefaultTypeFactory { get; set; }
 
         public Action AddArgument(Argument argument)
@@ -179,9 +179,11 @@ namespace Cr.ArgParse
 
         private bool IsOptionalArgument(Argument argument)
         {
-            return argument.OptionStrings.IsTrue() &&
-                   (argument.OptionStrings.Count != 1 ||
-                    StartsWithPrefix(argument.OptionStrings[0]));
+            var ret = argument.OptionStrings.IsTrue() &&
+                      (argument.OptionStrings.Count != 1 ||
+                       StartsWithPrefix(argument.OptionStrings[0]));
+            
+            return ret;
         }
 
         private Action<Action, IEnumerable<KeyValuePair<string, Action>>> GetConflictHandler()
@@ -259,8 +261,7 @@ namespace Cr.ArgParse
         {
             if (string.IsNullOrEmpty(optionString))
                 return optionString;
-            var localPrefixes = Prefixes;
-            return localPrefixes.Where(prefix => optionString.StartsWith(prefix, true, CultureInfo.InvariantCulture))
+            return Prefixes.Where(prefix => optionString.StartsWith(prefix, true, CultureInfo.InvariantCulture))
                 .Select(prefix => optionString.Substring(prefix.Length))
                 .FirstOrDefault() ?? optionString;
         }

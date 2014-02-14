@@ -13,6 +13,21 @@ namespace Cr.ArgParse
 
         public IList<Action> GroupActions { get; private set; }
 
+        public override IList<string> Prefixes
+        {
+            get { return Container.Prefixes; }
+        }
+
+        public override IList<string> LongPrefixes
+        {
+            get { return Container.LongPrefixes; }
+        }
+
+        public override IList<string> ShortPrefixes
+        {
+            get { return Container.ShortPrefixes; }
+        }
+
         public ActionContainer Container { get; set; }
 
         public override IList<Action> Actions

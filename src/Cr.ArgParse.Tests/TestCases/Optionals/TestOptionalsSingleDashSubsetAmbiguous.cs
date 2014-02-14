@@ -1,4 +1,4 @@
-namespace Cr.ArgParse.Tests
+namespace Cr.ArgParse.Tests.TestCases.Optionals
 {
     public class TestOptionalsSingleDashSubsetAmbiguous : ParserTestCase
     {
