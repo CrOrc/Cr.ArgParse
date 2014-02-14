@@ -291,7 +291,7 @@ namespace Cr.ArgParse.Tests.TestCases
                 {"-w 2", new ParseResult {{"w", "2"}, {"x", null}, {"y", "spam"}, {"z", 84}}},
                 {"-x", new ParseResult {{"w", null}, {"x", 42}, {"y", "spam"}, {"z", 84}}},
                 {"-x 2", new ParseResult {{"w", null}, {"x", "2"}, {"y", "spam"}, {"z", 84}}},
-                {"-y", new ParseResult {{"w", null}, {"x", null}, {"y", null}, {"z", 84}}},
+                {"-y", new ParseResult {{"w", null}, {"x", null}, {"y", "spam"}, {"z", 84}}},
                 {"-y 2", new ParseResult {{"w", null}, {"x", null}, {"y", "2"}, {"z", 84}}},
                 {"-z", new ParseResult {{"w", null}, {"x", null}, {"y", "spam"}, {"z", 42}}},
                 {"-z 2", new ParseResult {{"w", null}, {"x", null}, {"y", "spam"}, {"z", 2}}}
