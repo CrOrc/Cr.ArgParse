@@ -14,11 +14,11 @@ namespace Cr.ArgParse.Tests
             {
                 {"", new ParseResult {{"x", null}, {"y", new object[] {}}}},
                 {"-x", new ParseResult {{"x", new object[] {}}, {"y", new object[] {}}}},
-                {"-x a", new ParseResult {{"x", new[] {"a"}}, {"y", new object[] {}}}},
-                {"-x a -- b", new ParseResult {{"x", new[] {"a"}}, {"y", new[] {"b"}}}},
-                {"a", new ParseResult {{"x", null}, {"y", new[] {"a"}}}},
-                {"a -x", new ParseResult {{"x", new object[] {}}, {"y", new[] {"a"}}}},
-                {"a -x b", new ParseResult {{"x", new[] {"b"}}, {"y", new[] {"a"}}}}
+                {"-x a", new ParseResult {{"x", new object[] {"a"}}, {"y", new object[] {}}}},
+                {"-x a -- b", new ParseResult {{"x", new object[] {"a"}}, {"y", new object[] {"b"}}}},
+                {"a", new ParseResult {{"x", null}, {"y", new object[] {"a"}}}},
+                {"a -x", new ParseResult {{"x", new object[] {}}, {"y", new object[] {"a"}}}},
+                {"a -x b", new ParseResult {{"x", new object[] {"b"}}, {"y", new object[] {"a"}}}}
             };
         }
     }

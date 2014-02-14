@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Cr.ArgParse.Actions;
+using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
 {
@@ -27,6 +28,7 @@ namespace Cr.ArgParse
             IsRemainder = argument.IsRemainder;
             IsRequired = argument.IsRequired;
             MetaVariable = argument.MetaVariable;
+            TypeFactory = argument.TypeFactory;
             TypeName = argument.TypeName;
             ValueCount = argument.ValueCount;
         }
@@ -104,5 +106,7 @@ namespace Cr.ArgParse
         public ValueCount ValueCount { get; set; }
 
         public IList<object> Choices { get; set; }
+        
+        public Func<string,object> TypeFactory { get; set; }
     }
 }

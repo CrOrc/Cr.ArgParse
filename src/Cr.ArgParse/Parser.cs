@@ -373,7 +373,7 @@ namespace Cr.ArgParse
 
         private object GetValue(Action action, string argString)
         {
-            var typeFactory = GetTypeFactory(action.TypeName);
+            var typeFactory = action.TypeFactory ?? GetTypeFactory(action.TypeName);
             try
             {
                 return typeFactory(argString);

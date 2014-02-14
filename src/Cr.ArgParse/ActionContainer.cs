@@ -346,9 +346,7 @@ namespace Cr.ArgParse
         public void AddTypeFactory(string typeName, Func<string, object> typeFactory)
         {
             if (!string.IsNullOrEmpty(typeName))
-            {
                 typeFactories[typeName] = typeFactory;
-            }
             else
             {
                 if (typeFactory != null)

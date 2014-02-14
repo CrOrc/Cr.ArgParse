@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Cr.ArgParse.Actions
 {
@@ -16,6 +17,11 @@ namespace Cr.ArgParse.Actions
             OptionStrings = new List<string>(Argument.OptionStrings ?? new string[] {});
             Destination = Argument.Destination;
             IsRequired = Argument.IsRequired;
+        }
+
+        public Func<string, object> TypeFactory
+        {
+            get { return Argument.TypeFactory; }
         }
 
         public string Destination { get; private set; }

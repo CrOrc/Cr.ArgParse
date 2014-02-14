@@ -32,7 +32,7 @@ namespace Cr.ArgParse.Tests
 
             public void AreEqual(ParseResult expected, ParseResult actual)
             {
-                AreEqual(expected.ToDictionary(), expected.ToDictionary());
+                AreEqual(expected.ToDictionary(), actual.ToDictionary());
                 CollectionAssert.AreEqual(expected.UnrecognizedArguments, actual.UnrecognizedArguments,
                     "UnrecognizedArguments should be the same");
             }
