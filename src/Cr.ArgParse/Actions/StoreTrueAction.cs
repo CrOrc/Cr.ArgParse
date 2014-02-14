@@ -9,7 +9,7 @@
 
         public override object DefaultValue
         {
-            get { return false; }
+            get { return Argument.DefaultValue ?? false; }
         }
 
         public StoreTrueAction(Argument argument) : base(argument)
