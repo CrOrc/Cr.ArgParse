@@ -7,7 +7,7 @@ using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse.Actions
 {
-    public class SubParsersAction : ArgumentAction
+    public class SubParsersAction : Action
     {
         private readonly IDictionary<string, IArgumentParser> subParsers;
 

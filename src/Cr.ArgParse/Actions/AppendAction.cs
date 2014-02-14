@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Cr.ArgParse.Actions
 {
-    public class AppendAction : ArgumentAction
+    public class AppendAction : Action
     {
         public AppendAction(Argument argument)
             : base(argument)

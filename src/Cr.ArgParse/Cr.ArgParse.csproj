@@ -37,10 +37,10 @@
   <ItemGroup>
     <Compile Include="Actions\AppendAction.cs" />
     <Compile Include="Actions\AppendConstAction.cs" />
-    <Compile Include="Actions\IArgumentAction.cs" />
+    <Compile Include="Actions\IAction.cs" />
     <Compile Include="Actions\SubParsersAction.cs" />
     <Compile Include="Argument.cs" />
-    <Compile Include="Actions\ArgumentAction.cs" />
+    <Compile Include="Actions\Action.cs" />
     <Compile Include="ActionContainer.cs" />
     <Compile Include="Exceptions\ArgumentException.cs" />
     <Compile Include="ArgumentGroup.cs" />

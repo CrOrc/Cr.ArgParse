@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Cr.ArgParse.Tests
+﻿namespace Cr.ArgParse.Tests
 {
     public class TestPositionalsChoicesString : ParserTestCase
     {
@@ -11,7 +8,7 @@ namespace Cr.ArgParse.Tests
             {
                 new Argument("spam")
                 {
-                    Choices = "abcdefg".Split(new string[] {}, StringSplitOptions.None).Cast<object>().ToArray()
+                    Choices = new [] {"a", "b", "c", "d", "e", "f", "g"}
                 }
             };
             Failures = new[] {"", "--foo", "h", "42", "ef"};

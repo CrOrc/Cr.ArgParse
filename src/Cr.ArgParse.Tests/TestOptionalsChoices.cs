@@ -1,10 +1,16 @@
-﻿namespace Cr.ArgParse.Tests
+﻿using System.Linq;
+
+namespace Cr.ArgParse.Tests
 {
-    [IgnoreCase] public class TestOptionalsChoices : ParserTestCase
+    public class TestOptionalsChoices : ParserTestCase
     {
         public TestOptionalsChoices()
         {
-            ArgumentSignatures = new[] {new Argument("-f"), new Argument("-g") {TypeName = "int"}};
+            ArgumentSignatures = new[]
+            {
+                new Argument("-f") {Choices = new [] {"a", "b", "c"}},
+                new Argument("-g") {TypeName = "int", Choices = Enumerable.Range(0, 5).Cast<object>().ToArray()}
+            };
             Failures = new[] {"a", "-f d", "-fad", "-ga", "-g 6"};
             Successes = new SuccessCollection
             {

@@ -6,6 +6,7 @@ using System.Text.RegularExpressions;
 using Cr.ArgParse.Actions;
 using Cr.ArgParse.Exceptions;
 using Cr.ArgParse.Extensions;
+using Action = Cr.ArgParse.Actions.Action;
 using ArgumentException = Cr.ArgParse.Exceptions.ArgumentException;
 
 namespace Cr.ArgParse
@@ -57,14 +58,14 @@ namespace Cr.ArgParse
         {
             var argStrings = args.ToList();
             //map all mutually exclusive arguments to the other arguments they can't occur with
-            var actionConflicts = new Dictionary<ArgumentAction, List<ArgumentAction>>();
+            var actionConflicts = new Dictionary<Action, List<Action>>();
             foreach (var mutexGroup in MutuallyExclusiveGroups)
             {
                 var groupActions = mutexGroup.GroupActions;
                 foreach (var @tmp in groupActions.Select((it, i) => new {mutexAction = it, i}))
                 {
                     var conflicts = actionConflicts.SafeGetValue(@tmp.mutexAction) ??
-                                    (actionConflicts[@tmp.mutexAction] = new List<ArgumentAction>());
+                                    (actionConflicts[@tmp.mutexAction] = new List<Action>());
                     conflicts.AddRange(groupActions.Take(@tmp.i));
                     conflicts.AddRange(groupActions.Skip(@tmp.i + 1));
                 }
@@ -106,10 +107,10 @@ namespace Cr.ArgParse
 
             var argStringPattern = argStringPatternBuilder.ToString();
 
-            var seenActions = new HashSet<ArgumentAction>();
-            var seenNonDefaultActions = new HashSet<ArgumentAction>();
+            var seenActions = new HashSet<Action>();
+            var seenNonDefaultActions = new HashSet<Action>();
             var extras = new List<string>();
-            Action<ArgumentAction, IEnumerable<string>, string> takeAction =
+            Action<Action, IEnumerable<string>, string> takeAction =
                 (action, argumentStrings, optionString) =>
                 {
                     seenActions.Add(action);
@@ -121,7 +122,7 @@ namespace Cr.ArgParse
                     {
                         seenNonDefaultActions.Add(action);
                         foreach (var actionName in
-                            actionConflicts.SafeGetValue(action, new List<ArgumentAction>())
+                            actionConflicts.SafeGetValue(action, new List<Action>())
                                 .Where(seenNonDefaultActions.Contains)
                                 .Select(GetActionName))
                             throw new ArgumentException(action,
@@ -276,7 +277,7 @@ namespace Cr.ArgParse
 
             // make sure all required actions were present and also convert
             // action defaults which were not given as arguments
-            var requiredActions = new List<ArgumentAction>();
+            var requiredActions = new List<Action>();
             foreach (var action in Actions)
             {
                 if (!seenActions.Contains(action))
@@ -303,7 +304,7 @@ namespace Cr.ArgParse
             return parseResult;
         }
 
-        private static string GetActionName(ArgumentAction action)
+        private static string GetActionName(Action action)
         {
             return action == null
                 ? null
@@ -312,7 +313,7 @@ namespace Cr.ArgParse
                     : (action.MetaVariable ?? action.Destination));
         }
 
-        private object GetValues(ArgumentAction action, IEnumerable<string> argumentStrings)
+        private object GetValues(Action action, IEnumerable<string> argumentStrings)
         {
             object value;
             var argStrings = (argumentStrings ?? new string[] {}).ToList();
@@ -370,7 +371,7 @@ namespace Cr.ArgParse
             return value;
         }
 
-        private object GetValue(ArgumentAction action, string argString)
+        private object GetValue(Action action, string argString)
         {
             var typeFactory = GetTypeFactory(action.TypeName);
             try
@@ -384,13 +385,13 @@ namespace Cr.ArgParse
             }
         }
 
-        private void CheckValue(ArgumentAction action, object value)
+        private void CheckValue(Action action, object value)
         {
             if(action.Choices != null && !action.Choices.Contains(value))
                 throw new InvalideChoiceException(action,value);
         }
 
-        private int MatchArgument(ArgumentAction action, string argStringsPattern)
+        private int MatchArgument(Action action, string argStringsPattern)
         {
             try
             {
@@ -411,7 +412,7 @@ namespace Cr.ArgParse
             }
         }
 
-        private IList<int> MatchArgumentsPartial(IList<ArgumentAction> actions, string argStringsPattern)
+        private IList<int> MatchArgumentsPartial(IList<Action> actions, string argStringsPattern)
         {
             var res = new List<int>();
             for (var i = actions.Count; i > 0; --i)
@@ -426,7 +427,7 @@ namespace Cr.ArgParse
             return res;
         }
 
-        private static string GetValueCountPattern(ArgumentAction action)
+        private static string GetValueCountPattern(Action action)
         {
             var res = action.IsRemainder
                 ? "([-AO]*)"
@@ -446,7 +447,7 @@ namespace Cr.ArgParse
             if (!StartsWithPrefix(argString))
                 return null;
             // if the option string is present in the parser, return the action
-            ArgumentAction action;
+            Action action;
             if (OptionStringActions.TryGetValue(argString, out action))
                 return new OptionTuple(action, argString);
             // if it's just a single character, it was meant to be positional
@@ -540,21 +541,21 @@ namespace Cr.ArgParse
 
         private class ActionTuple
         {
-            public ActionTuple(ArgumentAction action, IList<string> arguments, string optionString)
+            public ActionTuple(Action action, IList<string> arguments, string optionString)
             {
                 Action = action;
                 Arguments = arguments;
                 OptionString = optionString;
             }
 
-            public ArgumentAction Action { get; private set; }
+            public Action Action { get; private set; }
             public IList<string> Arguments { get; private set; }
             public string OptionString { get; private set; }
         }
 
         private class ActionTupleList : List<ActionTuple>
         {
-            public void Add(ArgumentAction action, IList<string> arguments, string optionString)
+            public void Add(Action action, IList<string> arguments, string optionString)
             {
                 Add(new ActionTuple(action, arguments, optionString));
             }
@@ -562,14 +563,14 @@ namespace Cr.ArgParse
 
         private class OptionTuple
         {
-            public OptionTuple(ArgumentAction action, string optionString, string explicitArgument = null)
+            public OptionTuple(Action action, string optionString, string explicitArgument = null)
             {
                 Action = action;
                 OptionString = optionString;
                 ExplicitArgument = explicitArgument;
             }
 
-            public ArgumentAction Action { get; private set; }
+            public Action Action { get; private set; }
             public string ExplicitArgument { get; private set; }
             public string OptionString { get; private set; }
         }

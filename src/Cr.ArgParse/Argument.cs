@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Cr.ArgParse.Actions;
 
@@ -20,6 +19,7 @@ namespace Cr.ArgParse
             if (ReferenceEquals(argument, null)) return;
             ActionFactory = argument.ActionFactory;
             ActionName = argument.ActionName;
+            Choices = argument.Choices != null ? argument.Choices.ToList() : null;
             ConstValue = argument.ConstValue;
             DefaultValue = argument.DefaultValue;
             Destination = argument.Destination;
@@ -43,7 +43,7 @@ namespace Cr.ArgParse
         /// <summary>
         /// Custom action to be performed on argument. If present <see cref="ActionName"/> will be ignored.
         /// </summary>
-        public Func<Argument, ArgumentAction> ActionFactory { get; set; }
+        public System.Func<Argument, Action> ActionFactory { get; set; }
 
         /// <summary>
         /// Name of predefined action.

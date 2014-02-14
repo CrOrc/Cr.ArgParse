@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Cr.ArgParse.Actions
 {
-    public class AppendConstAction : ArgumentAction
+    public class AppendConstAction : Action
     {
         private readonly ValueCount valueCount;
 

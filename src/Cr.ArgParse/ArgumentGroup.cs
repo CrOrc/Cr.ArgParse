@@ -8,14 +8,14 @@ namespace Cr.ArgParse
         public ArgumentGroup(ActionContainer container, string title = null, string description = null)
         {
             Container = container;
-            GroupActions = new List<ArgumentAction>();
+            GroupActions = new List<Action>();
         }
 
-        public IList<ArgumentAction> GroupActions { get; private set; }
+        public IList<Action> GroupActions { get; private set; }
 
         public ActionContainer Container { get; set; }
 
-        public override IList<ArgumentAction> Actions
+        public override IList<Action> Actions
         {
             get { return Container.Actions; }
         }
@@ -26,7 +26,7 @@ namespace Cr.ArgParse
         }
 
 
-        public override IDictionary<string, ArgumentAction> OptionStringActions
+        public override IDictionary<string, Action> OptionStringActions
         {
             get { return Container.OptionStringActions; }
         }
@@ -35,17 +35,17 @@ namespace Cr.ArgParse
         {
             get { return Container.HasNegativeNumberOptionals; }
         }
-        public override ArgumentAction AddAction(ArgumentAction argumentAction)
+        public override Action AddAction(Action action)
         {
-            var res = base.AddAction(argumentAction);
+            var res = base.AddAction(action);
             GroupActions.Add(res);
             return res;
         }
 
-        public override void RemoveAction(ArgumentAction argumentAction)
+        public override void RemoveAction(Action action)
         {
-            base.RemoveAction(argumentAction);
-            GroupActions.Remove(argumentAction);
+            base.RemoveAction(action);
+            GroupActions.Remove(action);
         }
 
     }

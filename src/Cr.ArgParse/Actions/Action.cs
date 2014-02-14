@@ -2,7 +2,7 @@
 
 namespace Cr.ArgParse.Actions
 {
-    public abstract class ArgumentAction : IArgumentAction
+    public abstract class Action : IAction
     {
         public Argument Argument { get; private set; }
         public ActionContainer Container { get; set; }
@@ -10,7 +10,7 @@ namespace Cr.ArgParse.Actions
         public IList<string> OptionStrings { get; private set; }
         public bool IsRequired { get; set; }
 
-        protected ArgumentAction(Argument argument)
+        protected Action(Argument argument)
         {
             Argument = argument;
             OptionStrings = new List<string>(Argument.OptionStrings ?? new string[] {});

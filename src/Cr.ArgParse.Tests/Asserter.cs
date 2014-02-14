@@ -11,14 +11,14 @@ namespace Cr.ArgParse.Tests
             Assert.That(actual, new SmartConstraint(expected));
         }
 
-        public void AreEqual(ArgumentAction action1, ArgumentAction action2)
+        public void AreEqual(Action action1, Action action2)
         {
             Assert.That(action2, new ArgumentActionConstraint(action1));
         }
 
         private class ArgumentActionConstraint : BaseSmartEqualityConstraint
         {
-            public ArgumentActionConstraint(ArgumentAction expected) : base(expected)
+            public ArgumentActionConstraint(Action expected) : base(expected)
             {
             }
         }

@@ -9,27 +9,27 @@ namespace Cr.ArgParse.Exceptions
     {
         private readonly string message;
 
-        public RequiredArgumentsException(IEnumerable<ArgumentAction> requiredActions)
+        public RequiredArgumentsException(IEnumerable<Action> requiredActions)
         {
-            RequiredActions = (requiredActions ?? new ArgumentAction[] {}).ToList();
+            RequiredActions = (requiredActions ?? new Action[] {}).ToList();
             RequiredArguments = RequiredActions.Select(GetArgumentName).ToList();
             message = string.Format("The following arguments are required: {0}", string.Join(", ", RequiredArguments));
         }
 
         public override string Message { get { return message; } }
 
-        public IList<ArgumentAction> RequiredActions { get; private set; }
+        public IList<Action> RequiredActions { get; private set; }
         public IList<string> RequiredArguments { get; private set; }
 
-        private static string GetArgumentName(ArgumentAction argumentAction)
+        private static string GetArgumentName(Action action)
         {
-            if (argumentAction == null) return null;
-            if (argumentAction.OptionStrings.IsTrue())
-                return string.Format("({0})", string.Join("/", argumentAction.OptionStrings));
-            if (!string.IsNullOrWhiteSpace(argumentAction.MetaVariable))
-                return argumentAction.MetaVariable;
-            if (argumentAction.HasDestination && argumentAction.HasValidDestination)
-                return argumentAction.Destination;
+            if (action == null) return null;
+            if (action.OptionStrings.IsTrue())
+                return string.Format("({0})", string.Join("/", action.OptionStrings));
+            if (!string.IsNullOrWhiteSpace(action.MetaVariable))
+                return action.MetaVariable;
+            if (action.HasDestination && action.HasValidDestination)
+                return action.Destination;
             return null;
         }
     }

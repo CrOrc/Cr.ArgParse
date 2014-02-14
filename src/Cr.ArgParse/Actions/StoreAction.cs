@@ -1,6 +1,6 @@
 ﻿namespace Cr.ArgParse.Actions
 {
-    public class StoreAction : ArgumentAction
+    public class StoreAction : Action
     {
         public StoreAction(Argument argument) : base(argument)
         {

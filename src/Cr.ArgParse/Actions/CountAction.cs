@@ -1,6 +1,6 @@
 ﻿namespace Cr.ArgParse.Actions
 {
-    public class CountAction : ArgumentAction
+    public class CountAction : Action
     {
         private readonly ValueCount valueCount;
 

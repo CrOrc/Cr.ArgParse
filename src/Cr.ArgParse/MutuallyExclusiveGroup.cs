@@ -1,5 +1,6 @@
 ﻿using System;
 using Cr.ArgParse.Actions;
+using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
 {
@@ -13,11 +14,11 @@ namespace Cr.ArgParse
 
         public bool IsRequired { get; private set; }
 
-        public override ArgumentAction AddAction(ArgumentAction argumentAction)
+        public override Action AddAction(Action action)
         {
-            if (argumentAction.IsRequired)
+            if (action.IsRequired)
                 throw new Exception("Mutually exclusive arguments must be optional");
-            return base.AddAction(argumentAction);
+            return base.AddAction(action);
         }
     }
 }
