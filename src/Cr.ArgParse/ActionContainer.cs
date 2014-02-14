@@ -61,9 +61,10 @@ namespace Cr.ArgParse
                 {"store_const", arg => new StoreConstAction(arg)},
                 {"store_true", arg => new StoreTrueAction(arg)},
                 {"store_false", arg => new StoreFalseAction(arg)},
-                {"count", arg => new CountAction(arg)},
                 {"append", arg => new AppendAction(arg)},
                 {"append_const", arg => new AppendConstAction(arg)},
+                {"count", arg => new CountAction(arg)},
+                {"parsers", arg => new SubParsersAction(arg)},
             });
 
             //check conflict resolving

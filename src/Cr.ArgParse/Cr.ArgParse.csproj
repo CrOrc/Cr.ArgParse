@@ -37,6 +37,8 @@
   <ItemGroup>
     <Compile Include="Actions\AppendAction.cs" />
     <Compile Include="Actions\AppendConstAction.cs" />
+    <Compile Include="Actions\IArgumentAction.cs" />
+    <Compile Include="Actions\SubParsersAction.cs" />
     <Compile Include="Argument.cs" />
     <Compile Include="Actions\ArgumentAction.cs" />
     <Compile Include="ActionContainer.cs" />

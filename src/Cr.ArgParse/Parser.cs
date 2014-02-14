@@ -23,13 +23,13 @@ namespace Cr.ArgParse
         public ParseResult ParseArguments(IEnumerable<string> args, ParseResult parseResult = null)
         {
             //parse the arguments and exit if there are any errors
-            parseResult = ParseKnowArguments(args, parseResult);
+            parseResult = ParseKnownArguments(args, parseResult);
             if (parseResult.UnrecognizedArguments != null && parseResult.UnrecognizedArguments.Any())
                 throw new UnrecognizedArgumentsException(parseResult.UnrecognizedArguments);
             return parseResult;
         }
 
-        public ParseResult ParseKnowArguments(IEnumerable<string> args, ParseResult parseResult)
+        public ParseResult ParseKnownArguments(IEnumerable<string> args, ParseResult parseResult)
         {
             if (parseResult == null)
                 parseResult = new ParseResult();
@@ -233,7 +233,6 @@ namespace Cr.ArgParse
                         positionals.RemoveRange(0, toRemove);
                     return patternStartIndex;
                 };
-            extras = new List<string>();
             var globalStartIndex = 0;
             var maxOptionStringIndex = optionStringIndices.Any() ? optionStringIndices.Keys.Max() : -1;
             while (globalStartIndex <= maxOptionStringIndex)
@@ -268,7 +267,10 @@ namespace Cr.ArgParse
             extras.AddRange(argStrings.Skip(globalStopIndex));
 
             if (extras.Any())
-                parseResult.UnrecognizedArguments = extras;
+                parseResult.UnrecognizedArguments =
+                    new[] {parseResult.UnrecognizedArguments, extras}.Where(it => it != null)
+                        .SelectMany(it => it)
+                        .ToList();
 
             // make sure all required actions were present and also convert
             // action defaults which were not given as arguments
@@ -287,7 +289,7 @@ namespace Cr.ArgParse
                         // only if it was defined already in the namespace
                         if (action.HasDefaultValue && !ReferenceEquals(action.DefaultValue, null) &&
                             action.DefaultValue is string &&
-                            parseResult.GetArgument<string>(action.Destination) == action.DefaultValue)
+                            parseResult.GetArgument<string>(action.Destination) == (string) action.DefaultValue)
                             parseResult[action.Destination] = GetValue(action, (string) action.DefaultValue);
                     }
                 }

@@ -2,7 +2,7 @@
 
 namespace Cr.ArgParse.Actions
 {
-    public abstract class ArgumentAction
+    public abstract class ArgumentAction : IArgumentAction
     {
         public Argument Argument { get; private set; }
         public ActionContainer Container { get; set; }
