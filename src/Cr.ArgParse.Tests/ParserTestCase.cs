@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cr.ArgParse.Exceptions;
 using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests

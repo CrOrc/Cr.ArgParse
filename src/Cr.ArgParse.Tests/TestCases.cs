@@ -474,34 +474,6 @@ namespace Cr.ArgParse.Tests
         }
     }
 
-    public class TestPositionalsChoicesInt : ParserTestCase
-    {
-        public TestPositionalsChoicesInt()
-        {
-            ArgumentSignatures = new[] {new Argument("spam") {TypeName = "int"}};
-            Failures = new[] {"", "--foo", "h", "42", "ef"};
-            Successes = new SuccessCollection
-            {
-                {"4", new ParseResult {{"spam", 4}}},
-                {"15", new ParseResult {{"spam", 15}}}
-            };
-        }
-    }
-
-    public class TestPositionalsChoicesString : ParserTestCase
-    {
-        public TestPositionalsChoicesString()
-        {
-            ArgumentSignatures = new[] {new Argument("spam")};
-            Failures = new[] {"", "--foo", "h", "42", "ef"};
-            Successes = new SuccessCollection
-            {
-                {"a", new ParseResult {{"spam", "a"}}},
-                {"g", new ParseResult {{"spam", "g"}}}
-            };
-        }
-    }
-
     public class TestPositionalsNargs1 : ParserTestCase
     {
         public TestPositionalsNargs1()

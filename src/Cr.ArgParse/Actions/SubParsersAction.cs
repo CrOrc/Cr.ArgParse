@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Cr.ArgParse.Exceptions;
 using Cr.ArgParse.Extensions;
 
 namespace Cr.ArgParse.Actions
@@ -25,7 +26,7 @@ namespace Cr.ArgParse.Actions
 
             var parser = subParsers.SafeGetValue(parserName);
             if (parser == null)
-                throw new UnknownParserError(this, parserName);
+                throw new UnknownParserException(this, parserName);
             
             // parse all the remaining options into the namespace
             // store any unrecognized options on the object, so that the top

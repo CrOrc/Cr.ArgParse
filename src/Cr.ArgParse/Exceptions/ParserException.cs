@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cr.ArgParse
+namespace Cr.ArgParse.Exceptions
 {
     public class ParserException : Exception
     {

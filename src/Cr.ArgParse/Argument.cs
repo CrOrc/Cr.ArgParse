@@ -102,5 +102,7 @@ namespace Cr.ArgParse
         /// Count of values for this argument.
         /// </summary>
         public ValueCount ValueCount { get; set; }
+
+        public IList<object> Choices { get; set; }
     }
 }

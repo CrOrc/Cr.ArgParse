@@ -75,6 +75,8 @@
     <Compile Include="TestOptionalsSingleDashLong.cs" />
     <Compile Include="TestOptionalsSingleDashSubsetAmbiguous.cs" />
     <Compile Include="TestOptionalsSingleDoubleDash.cs" />
+    <Compile Include="TestPositionalsChoicesInt.cs" />
+    <Compile Include="TestPositionalsChoicesString.cs" />
     <Compile Include="TestPrefixCharacterOnlyArguments.cs" />
     <Compile Include="ValueCountTest.cs" />
   </ItemGroup>

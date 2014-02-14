@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using Cr.ArgParse.Actions;
+using Cr.ArgParse.Exceptions;
 using Cr.ArgParse.Extensions;
+using ArgumentException = Cr.ArgParse.Exceptions.ArgumentException;
 
 namespace Cr.ArgParse
 {
@@ -122,7 +124,7 @@ namespace Cr.ArgParse
                             actionConflicts.SafeGetValue(action, new List<ArgumentAction>())
                                 .Where(seenNonDefaultActions.Contains)
                                 .Select(GetActionName))
-                            throw new ArgumentError(action,
+                            throw new ArgumentException(action,
                                 string.Format("not allowed with argument {0}", actionName));
                     }
                     //if argument_values is not SUPPRESS
@@ -169,7 +171,7 @@ namespace Cr.ArgParse
                                 }
                                 else
                                 {
-                                    throw new ArgumentError(action,
+                                    throw new ArgumentException(action,
                                         string.Format("Ignored explicit argument {0}", explicitArg));
                                 }
                             }
@@ -184,7 +186,7 @@ namespace Cr.ArgParse
                                 // error if a double-dash option did not use the explicit argument
                             else
                             {
-                                throw new ArgumentError(action,
+                                throw new ArgumentException(action,
                                     string.Format("Ignored explicit argument {0}", explicitArg));
                             }
                         }
@@ -377,14 +379,15 @@ namespace Cr.ArgParse
             }
             catch (Exception err)
             {
-                throw new ArgumentError(action,
+                throw new ArgumentException(action,
                     string.Format("Invalid type \"{0}\" for value \"{1}\"", action.TypeName, argString), err);
             }
         }
 
         private void CheckValue(ArgumentAction action, object value)
         {
-            //TODO: implement validation parsing result
+            if(action.Choices != null && !action.Choices.Contains(value))
+                throw new InvalideChoiceException(action,value);
         }
 
         private int MatchArgument(ArgumentAction action, string argStringsPattern)
@@ -394,7 +397,7 @@ namespace Cr.ArgParse
                 var valueCountPattern = "^" + GetValueCountPattern(action);
                 var match = Regex.Match(argStringsPattern, valueCountPattern);
                 if (!match.Success)
-                    throw new ArgumentError(action,
+                    throw new ArgumentException(action,
                         string.Format("Expected {0} argument(s)", action.ValueCount ?? new ValueCount(1)));
                 return match.Groups[1].Value.Length;
             }

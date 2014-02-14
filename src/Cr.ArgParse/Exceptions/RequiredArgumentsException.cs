@@ -3,7 +3,7 @@ using System.Linq;
 using Cr.ArgParse.Actions;
 using Cr.ArgParse.Extensions;
 
-namespace Cr.ArgParse
+namespace Cr.ArgParse.Exceptions
 {
     public class RequiredArgumentsException : ParserException
     {

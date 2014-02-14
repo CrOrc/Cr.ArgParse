@@ -40,6 +40,8 @@ namespace Cr.ArgParse.Actions
             get { return Argument.ValueCount; }
         }
 
+        public IList<object> Choices{get { return Argument.Choices; }}
+
         public string TypeName
         {
             get { return Argument.TypeName; }
