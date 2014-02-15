@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Linq;
+using System;
 
 namespace Cr.ArgParse.Actions
 {
@@ -12,11 +13,12 @@ namespace Cr.ArgParse.Actions
 
         public override void Call(ParseResult parseResult, object values, string optionString)
         {
+            Console.WriteLine(""+values);
             var newValues =
                 parseResult.GetArgument<IEnumerable>(Destination, new object[] {})
                     .Cast<object>()
                     .Concat(new[] {values})
-                    .ToList();
+                    .ToArray();
             parseResult[Destination] = newValues;
         }
     }

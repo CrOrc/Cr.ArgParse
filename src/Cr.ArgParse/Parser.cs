@@ -223,11 +223,12 @@ namespace Cr.ArgParse
                     var selectedPattern = argStringPattern.Substring(patternStartIndex);
                     var argCounts = MatchArgumentsPartial(positionals, selectedPattern);
 
-                    //slice off the appropriate arg strings for each Positional
+                    // slice off the appropriate arg strings for each Positional
                     // and add the Positional and its args to the list
                     foreach (var it in positionals.Zip(argCounts, (action, argCount) => new {action, argCount}))
                     {
                         var actionArgs = argStrings.Skip(patternStartIndex).Take(it.argCount).ToList();
+                        Console.WriteLine("["+string.Join(", ",actionArgs)+"]");
                         patternStartIndex += it.argCount;
                         takeAction(it.action, actionArgs, null);
                     }
@@ -422,6 +423,7 @@ namespace Cr.ArgParse
                 var match = Regex.Match(argStringsPattern, pattern);
                 if (!match.Success) continue;
                 res.AddRange(match.Groups.OfType<Group>().Skip(1).Select(it => it.Length));
+                Console.WriteLine(argStringsPattern+" ["+string.Join(", ",res)+"]");
                 break;
             }
             return res;
