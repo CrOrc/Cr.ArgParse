@@ -228,7 +228,6 @@ namespace Cr.ArgParse
                     foreach (var it in positionals.Zip(argCounts, (action, argCount) => new {action, argCount}))
                     {
                         var actionArgs = argStrings.Skip(patternStartIndex).Take(it.argCount).ToList();
-                        Console.WriteLine("["+string.Join(", ",actionArgs)+"]");
                         patternStartIndex += it.argCount;
                         takeAction(it.action, actionArgs, null);
                     }
@@ -423,7 +422,6 @@ namespace Cr.ArgParse
                 var match = Regex.Match(argStringsPattern, pattern);
                 if (!match.Success) continue;
                 res.AddRange(match.Groups.OfType<Group>().Skip(1).Select(it => it.Length));
-                Console.WriteLine(argStringsPattern+" ["+string.Join(", ",res)+"]");
                 break;
             }
             return res;
