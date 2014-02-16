@@ -318,7 +318,8 @@ namespace Cr.ArgParse
             object value;
             var argStrings = (argumentStrings ?? new string[] {}).ToList();
             if (argumentStrings != null)
-                if (action.IsParser || action.IsRemainder)
+                // for everything but PARSER, REMAINDER args, strip out first '--'
+                if (!action.IsParser && !action.IsRemainder)
                 {
                     argStrings.Remove("--");
                     argumentStrings = argStrings;
