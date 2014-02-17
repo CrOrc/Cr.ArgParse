@@ -325,7 +325,7 @@ namespace Cr.ArgParse
                     argumentStrings = argStrings;
                 }
             //optional argument produces a default when not present
-            var hasNoArgs = argStrings.IsNullOrEmpty();
+            var hasNoArgs = !argStrings.IsTrue();
             if (hasNoArgs && action.IsOptional)
             {
                 value = action.OptionStrings.Any() ? action.ConstValue : action.DefaultValue;
@@ -336,10 +336,11 @@ namespace Cr.ArgParse
                     CheckValue(action, value);
                 }
             }
-                //when ValueCount='0,n' on a positional, if there were no command-line args, use the default if it is anything other than null
+                // when ValueCount='0,n'|'*' on a positional, if there were no command-line
+                // args, use the default if it is anything other than null
             else if (hasNoArgs && !action.OptionStrings.Any() &&
                      action.ValueCount != null &&
-                     action.ValueCount.Min == 0 && action.ValueCount.Max > 0)
+                     action.ValueCount.IsZeroOrMore)
             {
                 value = action.DefaultValue ?? argumentStrings;
                 CheckValue(action, value);

@@ -103,6 +103,11 @@ namespace Cr.ArgParse
             return n >= 0 ? (uint?) n : null;
         }
 
+        public bool IsZeroOrMore
+        {
+        get { return Min == 0 && (!Max.HasValue || Max>0); }
+        }
+
         private string GetRegexString()
         {
             if (Min == 0 && Max == 1)

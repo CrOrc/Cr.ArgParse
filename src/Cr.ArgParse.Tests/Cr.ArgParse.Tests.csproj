@@ -57,34 +57,87 @@
     <Compile Include="ParserTestCase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleParserTestCases.cs" />
-    <Compile Include="TestCases\TestTypeUserDefined.cs" />
-    <Compile Include="TestCases\TestEmptyAndSpaceContainingArguments.cs" />
-    <Compile Include="TestCases\TestNargsRemainder.cs" />
+    <Compile Include="TestCases\TestCases.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestDefaultSuppress.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestEmptyAndSpaceContainingArguments.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestNargsRemainder.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="TestCases\TestNargsZeroOrMore.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="TestCases\TestOptionalsAlternatePrefixChars.cs" />
-    <Compile Include="TestCases\TestOptionalsAlternatePrefixCharsAddedHelp.cs" />
-    <Compile Include="TestCases\TestOptionalsAlternatePrefixCharsMultipleShortArgs.cs" />
-    <Compile Include="TestCases\TestOptionalsChoices.cs" />
-    <Compile Include="TestCases\TestOptionalsDoubleDash.cs" />
-    <Compile Include="TestCases\TestOptionalsDoubleDashPartialMatch.cs" />
-    <Compile Include="TestCases\TestOptionalsDoubleDashPrefixMatch.cs" />
-    <Compile Include="TestCases\TestOptionalsNumeric.cs" />
-    <Compile Include="TestCases\TestOptionalsRequired.cs" />
-    <Compile Include="TestCases\TestOptionalsSingleDash.cs" />
-    <Compile Include="TestCases\TestOptionalsSingleDashAmbiguous.cs" />
-    <Compile Include="TestCases\TestOptionalsSingleDashCombined.cs" />
-    <Compile Include="TestCases\TestOptionalsSingleDashLong.cs" />
-    <Compile Include="TestCases\TestOptionalsSingleDashSubsetAmbiguous.cs" />
-    <Compile Include="TestCases\TestOptionalsSingleDoubleDash.cs" />
-    <Compile Include="TestCases\TestCases.cs" />
-    <Compile Include="TestCases\TestPositionalsChoicesInt.cs" />
-    <Compile Include="TestCases\TestPositionalsChoicesString.cs" />
-    <Compile Include="TestCases\TestParserDefaultSuppress.cs" />
-    <Compile Include="TestCases\TestDefaultSuppress.cs" />
-    <Compile Include="TestCases\TestOptionLike.cs" />
-    <Compile Include="TestCases\TestPrefixCharacterOnlyArguments.cs" />
+    <Compile Include="TestCases\TestOptionalsAlternatePrefixChars.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsAlternatePrefixCharsAddedHelp.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsAlternatePrefixCharsMultipleShortArgs.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsChoices.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsDoubleDash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsDoubleDashPartialMatch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsDoubleDashPrefixMatch.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsNumeric.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsRequired.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsSingleDash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsSingleDashAmbiguous.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsSingleDashCombined.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsSingleDashLong.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsSingleDashSubsetAmbiguous.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionalsSingleDoubleDash.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestOptionLike.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestParserDefaultSuppress.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPositionalsChoicesInt.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPositionalsChoicesString.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPositionalsNargsZeroOrMoreDefault.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestPrefixCharacterOnlyArguments.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="TestCases\TestTypeUserDefined.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ValueCountTest.cs" />
   </ItemGroup>
   <ItemGroup>
