@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using Cr.ArgParse.Actions;
 using Cr.ArgParse.Exceptions;
 using Cr.ArgParse.Extensions;
 using Action = Cr.ArgParse.Actions.Action;
@@ -51,6 +50,7 @@ namespace Cr.ArgParse
             }
 
             parseResult = ParseKnowArgumentsInternal(args, parseResult);
+
             return parseResult;
         }
 
@@ -110,7 +110,7 @@ namespace Cr.ArgParse
             var seenActions = new HashSet<Action>();
             var seenNonDefaultActions = new HashSet<Action>();
             var extras = new List<string>();
-            Action<Action, IEnumerable<string>, string> takeAction =
+            System.Action<Action, IEnumerable<string>, string> takeAction =
                 (action, argumentStrings, optionString) =>
                 {
                     seenActions.Add(action);
@@ -298,7 +298,7 @@ namespace Cr.ArgParse
                 }
             }
 
-            if (requiredActions.IsTrue())
+            if (!requiredActions.IsNullOrEmpty())
                 throw new RequiredArgumentsException(requiredActions);
 
             return parseResult;
@@ -319,16 +319,18 @@ namespace Cr.ArgParse
             var argStrings = (argumentStrings ?? new string[] {}).ToList();
             if (argumentStrings != null)
                 // for everything but PARSER, REMAINDER args, strip out first '--'
-                if (!action.IsParser && !action.IsRemainder)
+                if (!action.IsSpecial)
                 {
                     argStrings.Remove("--");
                     argumentStrings = argStrings;
                 }
             //optional argument produces a default when not present
-            var hasNoArgs = !argStrings.IsTrue();
+            var hasNoArgs = argStrings == null || !argStrings.Any();
             if (hasNoArgs && action.IsOptional)
             {
-                value = action.OptionStrings.Any() ? action.ConstValue : action.DefaultValue;
+                value = action.OptionStrings.Any()
+                    ? action.ConstValue
+                    : (action.HasDefaultValue ? action.DefaultValue : null);
                 var strValue = value as string;
                 if (strValue != null)
                 {
@@ -339,14 +341,16 @@ namespace Cr.ArgParse
                 // when ValueCount='0,n'|'*' on a positional, if there were no command-line
                 // args, use the default if it is anything other than null
             else if (hasNoArgs && !action.OptionStrings.Any() &&
-                     action.ValueCount != null &&
-                     action.ValueCount.IsZeroOrMore)
+                     action.IsZeroOrMore)
             {
-                value = action.DefaultValue ?? argumentStrings;
+                value = (!action.HasDefaultValue || !ReferenceEquals(action.DefaultValue, null))
+                    ? (action.HasDefaultValue ? action.DefaultValue : null)
+                    : argumentStrings;
+
                 CheckValue(action, value);
             }
                 // single argument or optional argument produces a single value
-            else if (argStrings.Count == 1 && (action.ValueCount == null || action.IsOptional) && !action.IsRemainder && !action.IsParser)
+            else if (argStrings.Count == 1 && action.IsSingleOrOptional)
             {
                 value = GetValue(action, argStrings[0]);
                 CheckValue(action, value);
@@ -354,11 +358,12 @@ namespace Cr.ArgParse
                 // REMAINDER arguments convert all values, checking none
             else if (action.IsRemainder)
                 value = argStrings.Select(it => GetValue(action, it)).ToList();
+                // PARSER arguments convert all values, but check only the first
             else if (action.IsParser)
             {
                 var convertedValues = argStrings.Select(it => GetValue(action, it)).ToList();
                 value = convertedValues;
-                CheckValue(action, value);
+                CheckValue(action, convertedValues[0]);
             }
                 // all other types of ValueCount produce a list
             else
@@ -375,7 +380,7 @@ namespace Cr.ArgParse
 
         private object GetValue(Action action, string argString)
         {
-            var typeFactory = action.TypeFactory ?? GetTypeFactory(action.TypeName);
+            var typeFactory = action.TypeFactory ?? GetTypeFactory(action.Type) ?? GetTypeFactory(action.TypeName) ??  DefaultTypeFactory;
             try
             {
                 return typeFactory(argString);
@@ -389,8 +394,8 @@ namespace Cr.ArgParse
 
         private void CheckValue(Action action, object value)
         {
-            if(action.Choices != null && !action.Choices.Contains(value))
-                throw new InvalideChoiceException(action,value);
+            if (action.Choices != null && !action.Choices.Contains(value))
+                throw new InvalideChoiceException(action, value);
         }
 
         private int MatchArgument(Action action, string argStringsPattern)
@@ -436,7 +441,7 @@ namespace Cr.ArgParse
                 : (action.IsParser
                     ? "(-*A[-AO]*)"
                     : string.Format("(-*(?:A-*){0})", action.ValueCount ?? new ValueCount(1)));
-            if (action.OptionStrings.IsTrue())
+            if (!action.OptionStrings.IsNullOrEmpty())
                 res = res.Replace("-*", "").Replace("-", "");
             return res;
         }

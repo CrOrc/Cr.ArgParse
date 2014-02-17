@@ -6,8 +6,8 @@ namespace Cr.ArgParse.Tests
         {
             ArgumentSignatures = new[]
             {
-                new Argument("foo") {SuppressDefaultValue = true, ValueCount = new ValueCount("?")},
-                new Argument("bar") {SuppressDefaultValue = true, ValueCount = new ValueCount("*")},
+                new Argument("foo") {ValueCount = new ValueCount("?"), SuppressDefaultValue = true},
+                new Argument("bar") {ValueCount = new ValueCount("*"), SuppressDefaultValue = true},
                 new Argument("--baz") {ActionName = "store_true", SuppressDefaultValue = true}
             };
             Failures = new[] {"-x"};

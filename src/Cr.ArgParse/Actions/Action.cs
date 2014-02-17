@@ -56,10 +56,32 @@ namespace Cr.ArgParse.Actions
             get { return Argument.TypeName; }
         }
 
+        public Type Type
+        {get { return Argument.Type; }}
+
         public bool IsOptional
         {
-            get { return ValueCount != null && ValueCount.Min == 0 && ValueCount.Max == 1; }
+            get { return !IsSpecial && ValueCount == ValueCount.Optional; }
         }
+
+        public bool IsZeroOrMore
+        {
+            get
+            {
+                return
+                    !IsSpecial && (ValueCount != null && ValueCount.IsZeroOrMore);
+            }
+        }
+
+        public bool IsSingleOrOptional
+        {
+            get{return !IsSpecial &&
+                ( ValueCount == null || ValueCount == ValueCount.Optional)
+                ;
+            }
+        }
+
+        public bool IsSpecial{get { return IsParser || IsRemainder; }}
 
         public virtual bool HasDestination
         {

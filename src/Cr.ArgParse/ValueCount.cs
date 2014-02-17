@@ -7,8 +7,39 @@ namespace Cr.ArgParse
     /// <summary>
     /// Describe count arguments
     /// </summary>
-    public class ValueCount
+    public class ValueCount : IEquatable<ValueCount>
     {
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (Max.GetHashCode()*397) ^ Min.GetHashCode();
+            }
+        }
+
+        public static bool operator ==(ValueCount left, ValueCount right)
+        {
+            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.Equals(right);
+        }
+
+        public static bool operator !=(ValueCount left, ValueCount right)
+        {
+            return !(left == right);
+        }
+
+        private static readonly Lazy<ValueCount> zeroLazy = new Lazy<ValueCount>(() => new ValueCount(0));
+        private static readonly Lazy<ValueCount> optionalLazy = new Lazy<ValueCount>(() => new ValueCount(0, 1));
+
+        public static ValueCount Zero
+        {
+            get { return zeroLazy.Value; }
+        }
+
+        public static ValueCount Optional
+        {
+            get { return optionalLazy.Value; }
+        }
+
         public ValueCount() : this(0, 1)
         {
         }
@@ -105,7 +136,7 @@ namespace Cr.ArgParse
 
         public bool IsZeroOrMore
         {
-        get { return Min == 0 && (!Max.HasValue || Max>0); }
+            get { return Min == 0 && (!Max.HasValue || Max > 0); }
         }
 
         private string GetRegexString()
@@ -119,6 +150,16 @@ namespace Cr.ArgParse
             if (!Min.HasValue && !Max.HasValue)
                 return "?";
             return Min == Max ? string.Format("{{{0}}}", Min) : string.Format("{{{0},{1}}}", Min, Max);
+        }
+
+        public bool Equals(ValueCount other)
+        {
+            return other != null && Min == other.Min && Max == other.Max;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as ValueCount);
         }
 
         public override string ToString()

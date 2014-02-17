@@ -1,6 +1,6 @@
 ﻿namespace Cr.ArgParse.Tests.TestCases
 {
-    public class TestParserDefaultSuppress : ParserTestCase
+    [IgnoreCase] public class TestParserDefaultSuppress : ParserTestCase
     {
         public TestParserDefaultSuppress()
         {

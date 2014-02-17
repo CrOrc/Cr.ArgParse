@@ -21,8 +21,11 @@ namespace Cr.ArgParse
         private IList<string> prefixes;
         private readonly Regex negativeNumberMatcher;
 
-        private readonly IDictionary<string, Func<string, object>> typeFactories =
+        private readonly IDictionary<string, Func<string, object>> typeFactoriesByName =
             new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
+        
+        private readonly IDictionary<Type, Func<string, object>> typeFactoriesByType =
+            new Dictionary<Type, Func<string, object>>();
 
         protected Regex NegativeNumberMatcher
         {
@@ -37,7 +40,7 @@ namespace Cr.ArgParse
         public ActionContainer(string description, IList<string> prefixes, string conflictHandlerName)
         {
 
-            typeFactories =
+            typeFactoriesByName =
             new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
             DefaultTypeFactory = argString => argString;
             AddSimpleTypeFactories(new Dictionary<string, Type>
@@ -179,7 +182,7 @@ namespace Cr.ArgParse
 
         private bool IsOptionalArgument(Argument argument)
         {
-            var ret = argument.OptionStrings.IsTrue() &&
+            var ret = !argument.OptionStrings.IsNullOrEmpty() &&
                       (argument.OptionStrings.Count != 1 ||
                        StartsWithPrefix(argument.OptionStrings[0]));
             
@@ -297,7 +300,7 @@ namespace Cr.ArgParse
                     res.IsRequired = true;
             }
 
-            if (string.IsNullOrEmpty(res.Destination) && argument.OptionStrings.IsTrue())
+            if (string.IsNullOrEmpty(res.Destination) && !argument.OptionStrings.IsNullOrEmpty())
                 res.Destination = argument.OptionStrings.FirstOrDefault();
 
             return res;
@@ -333,7 +336,7 @@ namespace Cr.ArgParse
         protected void AddSimpleTypeFactories(IEnumerable<KeyValuePair<string, Type>> typeFactoryPairs)
         {
             foreach (var kv in typeFactoryPairs)
-                AddTypeFactory(kv.Key, CreateSimpleTypeFactory(kv.Value));
+                AddTypeFactory(kv.Key, kv.Value, CreateSimpleTypeFactory(kv.Value));
         }
 
         private Func<string, object> CreateSimpleTypeFactory(Type targetType)
@@ -341,20 +344,25 @@ namespace Cr.ArgParse
             return argString => Convert.ChangeType(argString, targetType);
         }
 
-        public void AddTypeFactory(string typeName, Func<string, object> typeFactory)
+        public void AddTypeFactory(string typeName, Type type, Func<string, object> typeFactory)
         {
+            if (!ReferenceEquals(type, null))
+                typeFactoriesByType[type] = typeFactory;
             if (!string.IsNullOrEmpty(typeName))
-                typeFactories[typeName] = typeFactory;
-            else
-            {
-                if (typeFactory != null)
-                    DefaultTypeFactory = typeFactory;
-            }
+                typeFactoriesByName[typeName] = typeFactory;
+
+            if (ReferenceEquals(type, null) && string.IsNullOrEmpty(typeName) && typeFactory != null)
+                DefaultTypeFactory = typeFactory;
         }
 
         protected Func<string, object> GetTypeFactory(string typeName)
         {
-            return typeFactories.SafeGetValue(typeName, DefaultTypeFactory) ?? DefaultTypeFactory;
+            return typeFactoriesByName.SafeGetValue(typeName);
+        }
+
+        protected Func<string, object> GetTypeFactory(Type type)
+        {
+            return typeFactoriesByType.SafeGetValue(type);
         }
     }
 }

@@ -28,7 +28,9 @@ namespace Cr.ArgParse
             IsRemainder = argument.IsRemainder;
             IsRequired = argument.IsRequired;
             MetaVariable = argument.MetaVariable;
+            SuppressDefaultValue = argument.SuppressDefaultValue;
             TypeFactory = argument.TypeFactory;
+            Type = argument.Type;
             TypeName = argument.TypeName;
             ValueCount = argument.ValueCount;
         }
@@ -53,6 +55,8 @@ namespace Cr.ArgParse
         /// </summary>
         public string ActionName { get; set; }
 
+        public IList<object> Choices { get; set; }
+
         /// <summary>
         /// Default argument value
         /// </summary>
@@ -72,8 +76,6 @@ namespace Cr.ArgParse
         /// Description of argument
         /// </summary>
         public string HelpText { get; set; }
-
-        public bool SuppressDefaultValue { get; set; }
 
         /// <summary>
         /// This argument should contain all remaining args
@@ -95,6 +97,10 @@ namespace Cr.ArgParse
         /// </summary>
         public IList<string> OptionStrings { get; private set; }
 
+        public bool SuppressDefaultValue { get; set; }
+        public Type Type { get; set; }
+        public Func<string, object> TypeFactory { get; set; }
+
         /// <summary>
         /// Name argument type
         /// </summary>
@@ -104,9 +110,5 @@ namespace Cr.ArgParse
         /// Count of values for this argument.
         /// </summary>
         public ValueCount ValueCount { get; set; }
-
-        public IList<object> Choices { get; set; }
-        
-        public Func<string,object> TypeFactory { get; set; }
     }
 }

@@ -11,7 +11,7 @@ namespace Cr.ArgParse.Tests
             ArgumentSignatures = new[]
             {
                 new Argument("-") {ConstValue = "badger", Destination = "x", ValueCount = new ValueCount("?")},
-                new Argument("+") {Destination = "y"},
+                new Argument("+") {Destination = "y", DefaultValue = 42, Type = typeof(int)},
                 new Argument("-+-") {ActionName = "store_true", Destination = "z"}
             };
             Failures = new[] {"-y", "+ -"};
