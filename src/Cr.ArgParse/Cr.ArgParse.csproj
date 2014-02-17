@@ -42,6 +42,7 @@
     <Compile Include="Argument.cs" />
     <Compile Include="Actions\Action.cs" />
     <Compile Include="ActionContainer.cs" />
+    <Compile Include="ConflictHandlerType.cs" />
     <Compile Include="Exceptions\ArgumentException.cs" />
     <Compile Include="ArgumentGroup.cs" />
     <Compile Include="Actions\CountAction.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="Exceptions\RequiredArgumentsException.cs" />
     <Compile Include="Exceptions\UnknownParserException.cs" />
     <Compile Include="Exceptions\UnrecognizedArgumentsException.cs" />
+    <Compile Include="ParserSettings.cs" />
     <Compile Include="ValueCount.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="IArgumentParser.cs" />

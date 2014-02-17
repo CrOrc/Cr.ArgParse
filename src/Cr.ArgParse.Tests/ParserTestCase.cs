@@ -12,7 +12,7 @@ namespace Cr.ArgParse.Tests
         public IList<Argument> ArgumentSignatures { get; set; }
         public IList<string> Failures { get; set; }
         public IList<Tuple<IList<string>, ParseResult>> Successes { get; set; }
-        public Tuple<string, IList<string>, string> ParserSignature { get; set; }
+        public ParserSettings ParserSignature { get; set; }
 
         public Type DefaultExceptionType { get; set; }
 
@@ -73,7 +73,7 @@ namespace Cr.ArgParse.Tests
                 get { return ParserTestCase.DefaultExceptionType; }
             }
 
-            private Tuple<string, IList<string>, string> ParserSignature
+            private ParserSettings ParserSignature
             {
                 get { return ParserTestCase.ParserSignature; }
             }
@@ -81,7 +81,7 @@ namespace Cr.ArgParse.Tests
             private Parser CreateParser()
             {
                 var parser = ParserSignature != null
-                    ? new Parser(ParserSignature.Item1, ParserSignature.Item2, ParserSignature.Item3)
+                    ? new Parser(ParserSignature)
                     : new Parser();
                 AddArguments(parser);
                 return parser;

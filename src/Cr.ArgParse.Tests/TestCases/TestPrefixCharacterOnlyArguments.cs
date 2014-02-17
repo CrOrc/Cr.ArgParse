@@ -7,7 +7,7 @@ namespace Cr.ArgParse.Tests
     {
         public TestPrefixCharacterOnlyArguments()
         {
-            ParserSignature = new Tuple<string, IList<string>, string>("",new []{"-","+"},"resolve");
+            ParserSignature = new ParserSettings { Prefixes = new[] { "-", "+" } };
             ArgumentSignatures = new[]
             {
                 new Argument("-") {ConstValue = "badger", Destination = "x", ValueCount = new ValueCount("?")},

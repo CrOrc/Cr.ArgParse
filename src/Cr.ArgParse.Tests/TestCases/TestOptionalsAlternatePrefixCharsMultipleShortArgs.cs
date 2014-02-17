@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-
 namespace Cr.ArgParse.Tests.TestCases
 {
     public class TestOptionalsAlternatePrefixCharsMultipleShortArgs : ParserTestCase
     {
         public TestOptionalsAlternatePrefixCharsMultipleShortArgs()
         {
-            ParserSignature = new Tuple<string, IList<string>, string>("", new[] { "+", "-"}, "resolve");
+            ParserSignature = new ParserSettings {Prefixes = new[] {"+", "-"}};
             ArgumentSignatures = new[]
             {
                 new Argument("-x") {ActionName = "store_true"}, new Argument("+y") {ActionName = "store_true"},

@@ -12,13 +12,12 @@ namespace Cr.ArgParse
 {
     public class Parser : ActionContainer, IArgumentParser
     {
-        public Parser(string description, IList<string> prefixes, string conflictHandlerName)
-            : base(description, prefixes, conflictHandlerName)
+        public Parser(ParserSettings parserSettings):base(parserSettings)
         {
         }
 
         public Parser()
-            : this("", new[] {"-", "--", "/"}, "resolve")
+            : this(new ParserSettings())
         {
         }
 

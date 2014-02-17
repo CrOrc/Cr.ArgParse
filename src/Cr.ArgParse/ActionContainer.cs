@@ -12,36 +12,31 @@ namespace Cr.ArgParse
 {
     public class ActionContainer
     {
-        private readonly IDictionary<string, Func<Argument, Action>> actionFactories;
+        private readonly IDictionary<string, System.Func<Argument, Action>> actionFactories;
 
         private readonly IList<Action> actions;
 
-        private readonly IDictionary<string, Action> optionStringActions;
-
-        private IList<string> prefixes;
         private readonly Regex negativeNumberMatcher;
+        private readonly IDictionary<string, Action> optionStringActions;
 
         private readonly IDictionary<string, Func<string, object>> typeFactoriesByName =
             new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
-        
+
         private readonly IDictionary<Type, Func<string, object>> typeFactoriesByType =
             new Dictionary<Type, Func<string, object>>();
 
-        protected Regex NegativeNumberMatcher
-        {
-            get { return negativeNumberMatcher; }
-        }
+        private IList<string> prefixes;
 
         public ActionContainer()
-            : this("", new[] {"-", "--", "/"}, "resolve")
+            : this(new ParserSettings())
         {
         }
 
-        public ActionContainer(string description, IList<string> prefixes, string conflictHandlerName)
+        public ActionContainer(ParserSettings parserSettings)
         {
-
+            parserSettings = parserSettings ?? new ParserSettings();
             typeFactoriesByName =
-            new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
+                new Dictionary<string, Func<string, object>>(StringComparer.InvariantCultureIgnoreCase);
             DefaultTypeFactory = argString => argString;
             AddSimpleTypeFactories(new Dictionary<string, Type>
             {
@@ -53,9 +48,9 @@ namespace Cr.ArgParse
                 {"timespan", typeof (TimeSpan)}
             });
 
-            Description = description;
-            Prefixes = prefixes;
-            ConflictHandlerName = conflictHandlerName;
+            Description = parserSettings.Description ?? "";
+            Prefixes = parserSettings.Prefixes;
+            ConflictHandlerType = parserSettings.ConflictHandlerType;
 
             DefaultAction = "store";
             actionFactories =
@@ -92,29 +87,12 @@ namespace Cr.ArgParse
             HasNegativeNumberOptionals = new List<bool>();
         }
 
-        public virtual IList<bool> HasNegativeNumberOptionals { get; private set; }
-
-        public IList<ArgumentGroup> ActionGroups { get; private set; }
-        public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
-
-        public ArgumentGroup AddArgumentGroup(string title, string description = null)
-        {
-            var group = new ArgumentGroup(this, title, description ?? title);
-            ActionGroups.Add(group);
-            return group;
-        }
-
-        public MutuallyExclusiveGroup AddMutuallyExclusiveGroup(bool isRequired = false)
-        {
-            var group = new MutuallyExclusiveGroup(this, isRequired);
-            MutuallyExclusiveGroups.Add(group);
-            return group;
-        }
-
         private IDictionary<string, Func<Argument, Action>> ActionFactories
         {
             get { return actionFactories; }
         }
+
+        public IList<ArgumentGroup> ActionGroups { get; private set; }
 
         public virtual IList<Action> Actions
         {
@@ -122,10 +100,19 @@ namespace Cr.ArgParse
         }
 
         public string ConflictHandlerName { get; set; }
+        private ConflictHandlerType ConflictHandlerType { get; set; }
         public string DefaultAction { get; set; }
+        protected Func<string, object> DefaultTypeFactory { get; set; }
         public string Description { get; set; }
+        public virtual IList<bool> HasNegativeNumberOptionals { get; private set; }
 
         public virtual IList<string> LongPrefixes { get; private set; }
+        public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
+
+        protected Regex NegativeNumberMatcher
+        {
+            get { return negativeNumberMatcher; }
+        }
 
         public virtual IDictionary<string, Action> OptionStringActions
         {
@@ -151,7 +138,20 @@ namespace Cr.ArgParse
         }
 
         public virtual IList<string> ShortPrefixes { get; private set; }
-        protected Func<string, object> DefaultTypeFactory { get; set; }
+
+        public ArgumentGroup AddArgumentGroup(string title, string description = null)
+        {
+            var group = new ArgumentGroup(this, title, description ?? title);
+            ActionGroups.Add(group);
+            return group;
+        }
+
+        public MutuallyExclusiveGroup AddMutuallyExclusiveGroup(bool isRequired = false)
+        {
+            var group = new MutuallyExclusiveGroup(this, isRequired);
+            MutuallyExclusiveGroups.Add(group);
+            return group;
+        }
 
         public Action AddArgument(Argument argument)
         {
@@ -185,17 +185,20 @@ namespace Cr.ArgParse
             var ret = !argument.OptionStrings.IsNullOrEmpty() &&
                       (argument.OptionStrings.Count != 1 ||
                        StartsWithPrefix(argument.OptionStrings[0]));
-            
+
             return ret;
         }
 
         private Action<Action, IEnumerable<KeyValuePair<string, Action>>> GetConflictHandler()
         {
-            if (StringComparer.InvariantCultureIgnoreCase.Equals("error", ConflictHandlerName))
-                return HandleConflictWithError;
-            if (StringComparer.InvariantCultureIgnoreCase.Equals("resolve", ConflictHandlerName))
-                return HandleConflictWithResolve;
-            throw new ParserException(string.Format("Invalid conflict resolution value: {0}", ConflictHandlerName));
+            switch (ConflictHandlerType)
+            {
+                case ConflictHandlerType.Error:
+                    return HandleConflictWithError;
+                case ConflictHandlerType.Resolve:
+                    return HandleConflictWithResolve;
+            }
+            throw new ParserException(string.Format("Invalid conflict resolution value: {0}", ConflictHandlerType));
         }
 
         public void CheckConflict(Action action)

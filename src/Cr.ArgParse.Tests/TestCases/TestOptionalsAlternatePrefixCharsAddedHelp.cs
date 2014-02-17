@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-
 namespace Cr.ArgParse.Tests.TestCases
 {
     public class TestOptionalsAlternatePrefixCharsAddedHelp : ParserTestCase
     {
         public TestOptionalsAlternatePrefixCharsAddedHelp()
         {
-            ParserSignature = new Tuple<string, IList<string>, string>("", new[] {"+", "/", "::"}, "resolve");
+            ParserSignature = new ParserSettings {Prefixes = new[] {"+", "/", "::"}};
             ArgumentSignatures = new[]
             {
                 new Argument("+f") {ActionName = "store_true"},
