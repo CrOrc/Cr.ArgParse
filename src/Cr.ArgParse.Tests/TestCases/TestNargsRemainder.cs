@@ -4,7 +4,7 @@ namespace Cr.ArgParse.Tests
     {
         public TestNargsRemainder()
         {
-            ArgumentSignatures = new[] {new Argument("x"), new Argument("y") {IsRemainder = true, ActionName = "append"}, new Argument("-z")};
+            ArgumentSignatures = new[] {new Argument("x"), new Argument("y") {IsRemainder = true}, new Argument("-z")};
             Failures = new[] {"", "-z", "-z Z"};
             Successes = new SuccessCollection
             {

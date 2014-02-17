@@ -1,5 +1,5 @@
 ﻿<NUnitProject>
-  <Settings activeconfig="Release" />
+  <Settings activeconfig="Debug" />
   <Config name="Debug" binpathtype="Auto">
     <assembly path="src/Cr.ArgParse.Tests/bin/Debug/Cr.ArgParse.Tests.dll" />
   </Config>

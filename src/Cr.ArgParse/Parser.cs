@@ -223,7 +223,7 @@ namespace Cr.ArgParse
                     var selectedPattern = argStringPattern.Substring(patternStartIndex);
                     var argCounts = MatchArgumentsPartial(positionals, selectedPattern);
 
-                    //slice off the appropriate arg strings for each Positional
+                    // slice off the appropriate arg strings for each Positional
                     // and add the Positional and its args to the list
                     foreach (var it in positionals.Zip(argCounts, (action, argCount) => new {action, argCount}))
                     {
@@ -318,7 +318,8 @@ namespace Cr.ArgParse
             object value;
             var argStrings = (argumentStrings ?? new string[] {}).ToList();
             if (argumentStrings != null)
-                if (action.IsParser || action.IsRemainder)
+                // for everything but PARSER, REMAINDER args, strip out first '--'
+                if (!action.IsParser && !action.IsRemainder)
                 {
                     argStrings.Remove("--");
                     argumentStrings = argStrings;
