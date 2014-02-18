@@ -105,7 +105,11 @@ namespace Cr.ArgParse
         public string Description { get; set; }
         public virtual IList<bool> HasNegativeNumberOptionals { get; private set; }
 
-        public virtual IList<string> LongPrefixes { get; private set; }
+        private IEnumerable<string> LongPrefixes
+        {
+            get { return Prefixes.Where(it => it.Length > 1); }
+        }
+
         public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
 
         protected Regex NegativeNumberMatcher
@@ -131,12 +135,13 @@ namespace Cr.ArgParse
                         .OrderByDescending(it => it.Length)
                         .ThenBy(it => it)
                         .ToArray();
-                LongPrefixes = prefixes.Where(it => it.Length > 1).ToArray();
-                ShortPrefixes = prefixes.Where(it => it.Length == 1).ToArray();
             }
         }
 
-        public virtual IList<string> ShortPrefixes { get; private set; }
+        private IEnumerable<string> ShortPrefixes
+        {
+            get { return Prefixes.Where(it => it.Length == 1); }
+        }
 
         public ArgumentGroup AddArgumentGroup(string title, string description = null)
         {
@@ -156,6 +161,7 @@ namespace Cr.ArgParse
         {
             return AddArgument(new Argument(optionStrings));
         }
+
         public Action AddArgument(Argument argument)
         {
             var preparedArgument =
