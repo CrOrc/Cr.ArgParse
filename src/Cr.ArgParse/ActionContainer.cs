@@ -12,7 +12,7 @@ namespace Cr.ArgParse
 {
     public class ActionContainer
     {
-        private readonly IDictionary<string, System.Func<Argument, Action>> actionFactories;
+        private readonly IDictionary<string, Func<Argument, Action>> actionFactories;
 
         private readonly IList<Action> actions;
 
@@ -99,7 +99,6 @@ namespace Cr.ArgParse
             get { return actions; }
         }
 
-        public string ConflictHandlerName { get; set; }
         private ConflictHandlerType ConflictHandlerType { get; set; }
         public string DefaultAction { get; set; }
         protected Func<string, object> DefaultTypeFactory { get; set; }
@@ -153,6 +152,10 @@ namespace Cr.ArgParse
             return group;
         }
 
+        public Action AddArgument(params string[] optionStrings)
+        {
+            return AddArgument(new Argument(optionStrings));
+        }
         public Action AddArgument(Argument argument)
         {
             var preparedArgument =

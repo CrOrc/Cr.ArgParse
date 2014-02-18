@@ -1,5 +1,4 @@
 ﻿using System;
-using Cr.ArgParse.Actions;
 using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
