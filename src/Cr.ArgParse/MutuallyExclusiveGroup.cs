@@ -1,4 +1,5 @@
 ﻿using System;
+using Cr.ArgParse.Exceptions;
 using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
@@ -16,7 +17,7 @@ namespace Cr.ArgParse
         public override Action AddAction(Action action)
         {
             if (action.IsRequired)
-                throw new Exception("Mutually exclusive arguments must be optional");
+                throw new ParserException("Mutually exclusive arguments must be optional");
             return base.AddAction(action);
         }
     }
