@@ -5,12 +5,6 @@ namespace Cr.ArgParse.Actions
 {
     public abstract class Action : IAction
     {
-        public Argument Argument { get; private set; }
-        public ActionContainer Container { get; set; }
-
-        public IList<string> OptionStrings { get; private set; }
-        public bool IsRequired { get; set; }
-
         protected Action(Argument argument)
         {
             Argument = argument;
@@ -19,16 +13,11 @@ namespace Cr.ArgParse.Actions
             IsRequired = Argument.IsRequired;
         }
 
-        public Func<string, object> TypeFactory
-        {
-            get { return Argument.TypeFactory; }
-        }
+        public Argument Argument { get; private set; }
 
-        public string Destination { get; private set; }
-
-        public virtual object DefaultValue
+        public IList<object> Choices
         {
-            get { return Argument.DefaultValue; }
+            get { return Argument.Choices; }
         }
 
         public virtual object ConstValue
@@ -36,32 +25,60 @@ namespace Cr.ArgParse.Actions
             get { return Argument.ConstValue; }
         }
 
-        public string MetaVariable
+        public ActionContainer Container { get; set; }
+
+        public virtual object DefaultValue
         {
-            get { return Argument.MetaVariable; }
+            get { return Argument.DefaultValue; }
         }
 
-        public virtual ValueCount ValueCount
+        public string Destination { get; private set; }
+
+        public virtual bool HasDefaultValue
         {
-            get { return Argument.ValueCount; }
+            get { return !Argument.SuppressDefaultValue; }
         }
 
-        public IList<object> Choices
+        public virtual bool HasDestination
         {
-            get { return Argument.Choices; }
+            get { return true; }
         }
 
-        public string TypeName
+        public bool HasValidDestination
         {
-            get { return Argument.TypeName; }
+            get { return !string.IsNullOrWhiteSpace(Destination); }
         }
-
-        public Type Type
-        {get { return Argument.Type; }}
 
         public bool IsOptional
         {
             get { return !IsSpecial && ValueCount == ValueCount.Optional; }
+        }
+
+        public virtual bool IsParser
+        {
+            get { return false; }
+        }
+
+        public bool IsRemainder
+        {
+            get { return Argument.IsRemainder; }
+        }
+
+        public bool IsRequired { get; set; }
+
+        public bool IsSingleOrOptional
+        {
+            get
+            {
+                return !IsSpecial &&
+                       (ValueCount == null || ValueCount == ValueCount.Optional)
+                    ;
+            }
+        }
+
+        public bool IsSpecial
+        {
+            get { return IsParser || IsRemainder; }
         }
 
         public bool IsZeroOrMore
@@ -73,39 +90,31 @@ namespace Cr.ArgParse.Actions
             }
         }
 
-        public bool IsSingleOrOptional
+        public string MetaVariable
         {
-            get{return !IsSpecial &&
-                ( ValueCount == null || ValueCount == ValueCount.Optional)
-                ;
-            }
+            get { return Argument.MetaVariable; }
         }
 
-        public bool IsSpecial{get { return IsParser || IsRemainder; }}
+        public IList<string> OptionStrings { get; private set; }
 
-        public virtual bool HasDestination
+        public Type Type
         {
-            get { return true; }
+            get { return Argument.Type; }
         }
 
-        public virtual bool HasDefaultValue
+        public Func<string, object> TypeFactory
         {
-            get { return !Argument.SuppressDefaultValue; }
+            get { return Argument.TypeFactory; }
         }
 
-        public bool HasValidDestination
+        public string TypeName
         {
-            get { return !string.IsNullOrWhiteSpace(Destination); }
+            get { return Argument.TypeName; }
         }
 
-        public virtual bool IsParser
+        public virtual ValueCount ValueCount
         {
-            get { return false; }
-        }
-
-        public bool IsRemainder
-        {
-            get { return Argument.IsRemainder; }
+            get { return Argument.ValueCount; }
         }
 
         public abstract void Call(ParseResult parseResult, object values, string optionString);

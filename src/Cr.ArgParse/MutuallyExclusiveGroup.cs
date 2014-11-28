@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Cr.ArgParse.Actions;
 using Cr.ArgParse.Exceptions;
-using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
 {
-    public class MutuallyExclusiveGroup: ArgumentGroup
+    public class MutuallyExclusiveGroup : ArgumentGroup
     {
-        public MutuallyExclusiveGroup(ActionContainer container, bool isRequired=false)
-            : base(container, null,null)
+        public MutuallyExclusiveGroup(ActionContainer container, bool isRequired = false)
+            : base(container, null, null)
         {
             IsRequired = isRequired;
         }

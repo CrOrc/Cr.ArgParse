@@ -16,7 +16,10 @@ namespace Cr.ArgParse.Exceptions
             message = string.Format("The following arguments are required: {0}", string.Join(", ", RequiredArguments));
         }
 
-        public override string Message { get { return message; } }
+        public override string Message
+        {
+            get { return message; }
+        }
 
         public IList<Action> RequiredActions { get; private set; }
         public IList<string> RequiredArguments { get; private set; }

@@ -47,7 +47,7 @@
     <Compile Include="ArgumentGroup.cs" />
     <Compile Include="Actions\CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
-    <Compile Include="InvalideChoiceException.cs" />
+    <Compile Include="Exceptions\InvalideChoiceException.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
     <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Actions\StoreConstAction.cs" />

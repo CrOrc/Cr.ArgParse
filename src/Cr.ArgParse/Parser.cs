@@ -12,7 +12,7 @@ namespace Cr.ArgParse
 {
     public class Parser : ActionContainer, IArgumentParser
     {
-        public Parser(ParserSettings parserSettings):base(parserSettings)
+        public Parser(ParserSettings parserSettings) : base(parserSettings)
         {
         }
 
@@ -379,7 +379,8 @@ namespace Cr.ArgParse
 
         private object GetValue(Action action, string argString)
         {
-            var typeFactory = action.TypeFactory ?? GetTypeFactory(action.Type) ?? GetTypeFactory(action.TypeName) ??  DefaultTypeFactory;
+            var typeFactory = action.TypeFactory ??
+                              GetTypeFactory(action.Type) ?? GetTypeFactory(action.TypeName) ?? DefaultTypeFactory;
             try
             {
                 return typeFactory(argString);

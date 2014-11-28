@@ -11,18 +11,17 @@ namespace Cr.ArgParse
             GroupActions = new List<Action>();
         }
 
-        public IList<Action> GroupActions { get; private set; }
-
-        public override IList<string> Prefixes
-        {
-            get { return Container.Prefixes; }
-        }
-
-        public ActionContainer Container { get; set; }
-
         public override IList<Action> Actions
         {
             get { return Container.Actions; }
+        }
+
+        public ActionContainer Container { get; set; }
+        public IList<Action> GroupActions { get; private set; }
+
+        public override IList<bool> HasNegativeNumberOptionals
+        {
+            get { return Container.HasNegativeNumberOptionals; }
         }
 
         public override IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups
@@ -30,16 +29,16 @@ namespace Cr.ArgParse
             get { return Container.MutuallyExclusiveGroups; }
         }
 
-
         public override IDictionary<string, Action> OptionStringActions
         {
             get { return Container.OptionStringActions; }
         }
 
-        public override IList<bool> HasNegativeNumberOptionals
+        public override IList<string> Prefixes
         {
-            get { return Container.HasNegativeNumberOptionals; }
+            get { return Container.Prefixes; }
         }
+
         public override Action AddAction(Action action)
         {
             var res = base.AddAction(action);
@@ -52,6 +51,5 @@ namespace Cr.ArgParse
             base.RemoveAction(action);
             GroupActions.Remove(action);
         }
-
     }
 }

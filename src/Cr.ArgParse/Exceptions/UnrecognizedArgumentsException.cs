@@ -4,11 +4,11 @@ namespace Cr.ArgParse.Exceptions
 {
     public class UnrecognizedArgumentsException : ParserException
     {
-        public IList<string> UnrecognizedArguments { get; private set; }
-
         public UnrecognizedArgumentsException(IList<string> unrecognizedArguments)
         {
             UnrecognizedArguments = unrecognizedArguments;
         }
+
+        public IList<string> UnrecognizedArguments { get; private set; }
     }
 }
