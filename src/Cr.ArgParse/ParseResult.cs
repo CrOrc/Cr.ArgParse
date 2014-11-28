@@ -8,10 +8,7 @@ namespace Cr.ArgParse
 {
     public class ParseResult : IEnumerable
     {
-        public IEqualityComparer<string> EqualityComparer { get; private set; }
         private readonly IDictionary<string, object> results;
-
-        public IList<string> UnrecognizedArguments { get; set; }
 
         public ParseResult(IEqualityComparer<string> equalityComparer = null)
         {
@@ -19,65 +16,72 @@ namespace Cr.ArgParse
             results = new Dictionary<string, object>(EqualityComparer);
         }
 
-        public T GetArgument<T>(string argName, T defaultValue = default (T))
-        {
-            try
-            {
-                var res = results.SafeGetValue(argName);
-                if (res is T)
-                    return (T) res;
-            }
-            catch
-            {
-            }
-            return defaultValue;
-        }
-
-        public T GetArgument<T>(string argName, Func<T> defaultValueFactory)
-        {
-            try
-            {
-                var res = results.SafeGetValue(argName,defaultValueFactory);
-                if (res is T)
-                    return (T)res;
-            }
-            catch
-            {
-            }
-            return defaultValueFactory();
-        }
-
+        public IEqualityComparer<string> EqualityComparer { get; private set; }
 
         public object this[string s]
         {
-            get { return results.SafeGetValue(s); }
-            set
+            get { return Get(s); }
+            set { Set(s, value); }
+        }
+
+        public IList<string> UnrecognizedArguments { get; set; }
+
+        public IEnumerator GetEnumerator()
+        {
+            return results.GetEnumerator();
+        }
+
+        public T Get<T>(string argName, T defaultValue = default (T))
+        {
+            try
             {
-                if (s == null)
-                    throw new ArgumentNullException("s");
-                results[s] = value;
+                var res = this[argName];
+                if (res is T)
+                    return (T) res;
+                return defaultValue;
             }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        public object Get(string argName)
+        {
+            lock (((ICollection) results).SyncRoot)
+                return results.SafeGetValue(argName);
+        }
+
+        public void Set(string argName, object value)
+        {
+            if (argName == null)
+                throw new ArgumentNullException("argName");
+            lock (((ICollection) results).SyncRoot)
+                results[argName] = value;
         }
 
         public void Add(string key, object value)
         {
+            Set(key, value);
             this[key] = value;
         }
 
         public void Clear()
         {
-            results.Clear();
+            lock (((ICollection) results).SyncRoot)
+                results.Clear();
         }
 
         public IDictionary<string, object> ToDictionary()
         {
-            return results.ToDictionary(kv => kv.Key,
-                kv => kv.Value is ParseResult ? (kv.Value as ParseResult).ToDictionary() : kv.Value, EqualityComparer);
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            return results.GetEnumerator();
+            lock (((ICollection) results).SyncRoot)
+                return results.ToDictionary(kv => kv.Key,
+                    kv =>
+                    {
+                        var parseResult = kv.Value as ParseResult;
+                        return parseResult != null ? parseResult.ToDictionary() : kv.Value;
+                    },
+                    EqualityComparer);
         }
     }
 }

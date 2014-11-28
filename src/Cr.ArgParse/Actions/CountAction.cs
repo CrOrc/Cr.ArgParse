@@ -16,7 +16,7 @@
 
         public override void Call(ParseResult parseResult, object values, string optionString)
         {
-            parseResult[Destination] = parseResult.GetArgument(Destination, 0) + 1;
+            parseResult[Destination] = parseResult.Get(Destination, 0) + 1;
         }
     }
 }

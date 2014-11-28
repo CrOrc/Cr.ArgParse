@@ -291,7 +291,7 @@ namespace Cr.ArgParse
                         // only if it was defined already in the namespace
                         if (action.HasDefaultValue && !ReferenceEquals(action.DefaultValue, null) &&
                             action.DefaultValue is string &&
-                            parseResult.GetArgument<string>(action.Destination) == (string) action.DefaultValue)
+                            parseResult.Get<string>(action.Destination) == (string) action.DefaultValue)
                             parseResult[action.Destination] = GetValue(action, (string) action.DefaultValue);
                     }
                 }

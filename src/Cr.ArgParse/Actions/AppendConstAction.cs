@@ -21,7 +21,7 @@ namespace Cr.ArgParse.Actions
         public override void Call(ParseResult parseResult, object values, string optionString)
         {
             var newValues =
-                parseResult.GetArgument<IEnumerable>(Destination, new object[] {})
+                parseResult.Get<IEnumerable>(Destination, new object[] {})
                     .Cast<object>()
                     .Concat(new[] {ConstValue})
                     .ToArray();

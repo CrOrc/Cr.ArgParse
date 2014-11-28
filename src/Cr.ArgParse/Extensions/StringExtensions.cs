@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cr.ArgParse.Extensions
 {
-    public static class StringExtensions
+    internal static class StringExtensions
     {
         public static bool StartsWith(this string str, IEnumerable<string> compareStrings)
         {

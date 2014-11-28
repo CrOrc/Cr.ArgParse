@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Cr.ArgParse.Extensions
 {
-    public static class EnumerableExtensions
+    internal static class EnumerableExtensions
     {
         public static bool IsNullOrEmpty<T>(this IEnumerable<T> list)
         {
