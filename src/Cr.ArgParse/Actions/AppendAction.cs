@@ -5,8 +5,8 @@ namespace Cr.ArgParse.Actions
 {
     public class AppendAction : Action
     {
-        public AppendAction(Argument argument)
-            : base(argument)
+        public AppendAction(Argument argument, IActionContainer container)
+            : base(argument, container)
         {
         }
 

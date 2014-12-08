@@ -5,9 +5,10 @@ namespace Cr.ArgParse.Actions
 {
     public abstract class Action : IAction
     {
-        protected Action(Argument argument)
+        protected Action(Argument argument, IActionContainer container=null)
         {
             Argument = argument;
+            Container = container;
             OptionStrings = new List<string>(Argument.OptionStrings ?? new string[] {});
             Destination = Argument.Destination;
             IsRequired = Argument.IsRequired;
@@ -25,7 +26,7 @@ namespace Cr.ArgParse.Actions
             get { return Argument.ConstValue; }
         }
 
-        public ActionContainer Container { get; set; }
+        public IActionContainer Container { get; protected internal set; }
 
         public virtual object DefaultValue
         {

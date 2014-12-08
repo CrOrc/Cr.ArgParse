@@ -4,8 +4,8 @@
     {
         private readonly ValueCount valueCount;
 
-        public StoreConstAction(Argument argument)
-            : base(argument)
+        public StoreConstAction(Argument argument, IActionContainer container)
+            : base(argument, container)
         {
             valueCount = new ValueCount(0);
         }

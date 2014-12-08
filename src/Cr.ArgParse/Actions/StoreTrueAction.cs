@@ -2,7 +2,7 @@
 {
     public class StoreTrueAction : StoreConstAction
     {
-        public StoreTrueAction(Argument argument) : base(argument)
+        public StoreTrueAction(Argument argument, IActionContainer container) : base(argument,container)
         {
         }
 

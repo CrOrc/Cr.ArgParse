@@ -48,6 +48,7 @@
     <Compile Include="Actions\CountAction.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Exceptions\InvalideChoiceException.cs" />
+    <Compile Include="IActionContainer.cs" />
     <Compile Include="MutuallyExclusiveGroup.cs" />
     <Compile Include="Exceptions\ParserException.cs" />
     <Compile Include="Actions\StoreConstAction.cs" />

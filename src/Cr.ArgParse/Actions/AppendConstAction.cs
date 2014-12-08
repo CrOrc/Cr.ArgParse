@@ -7,8 +7,8 @@ namespace Cr.ArgParse.Actions
     {
         private readonly ValueCount valueCount;
 
-        public AppendConstAction(Argument argument)
-            : base(argument)
+        public AppendConstAction(Argument argument, IActionContainer container)
+            : base(argument, container)
         {
             valueCount = new ValueCount(0);
         }

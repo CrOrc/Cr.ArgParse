@@ -11,7 +11,7 @@ namespace Cr.ArgParse.Actions
     {
         private readonly IDictionary<string, IArgumentParser> subParsers;
 
-        public SubParsersAction(Argument argument) : base(argument)
+        public SubParsersAction(Argument argument, IActionContainer container) : base(argument, container)
         {
             subParsers = new SortedDictionary<string, IArgumentParser>(StringComparer.InvariantCulture);
         }

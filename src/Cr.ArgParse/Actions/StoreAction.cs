@@ -2,7 +2,7 @@
 {
     public class StoreAction : Action
     {
-        public StoreAction(Argument argument) : base(argument)
+        public StoreAction(Argument argument, ActionContainer container) : base(argument, container)
         {
         }
 

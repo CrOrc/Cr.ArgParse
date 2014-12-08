@@ -10,7 +10,7 @@ using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
 {
-    public class ActionContainer
+    public class ActionContainer: IActionContainer
     {
         private readonly IDictionary<string, Func<Argument, Action>> actionFactories;
 
@@ -57,14 +57,14 @@ namespace Cr.ArgParse
                 new Dictionary<string, Func<Argument, Action>>(StringComparer.InvariantCultureIgnoreCase);
             RegisterActions(new Dictionary<string, Func<Argument, Action>>
             {
-                {"store", arg => new StoreAction(arg)},
-                {"store_const", arg => new StoreConstAction(arg)},
-                {"store_true", arg => new StoreTrueAction(arg)},
-                {"store_false", arg => new StoreFalseAction(arg)},
-                {"append", arg => new AppendAction(arg)},
-                {"append_const", arg => new AppendConstAction(arg)},
-                {"count", arg => new CountAction(arg)},
-                {"parsers", arg => new SubParsersAction(arg)},
+                {"store", arg => new StoreAction(arg, this)},
+                {"store_const", arg => new StoreConstAction(arg, this)},
+                {"store_true", arg => new StoreTrueAction(arg, this)},
+                {"store_false", arg => new StoreFalseAction(arg, this)},
+                {"append", arg => new AppendAction(arg, this)},
+                {"append_const", arg => new AppendConstAction(arg, this)},
+                {"count", arg => new CountAction(arg, this)},
+                {"parsers", arg => new SubParsersAction(arg, this)},
             });
 
             //check conflict resolving

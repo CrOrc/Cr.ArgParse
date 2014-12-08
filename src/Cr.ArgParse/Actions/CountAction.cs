@@ -4,7 +4,7 @@
     {
         private readonly ValueCount valueCount;
 
-        public CountAction(Argument argument) : base(argument)
+        public CountAction(Argument argument, IActionContainer container) : base(argument, container)
         {
             valueCount = new ValueCount(0);
         }

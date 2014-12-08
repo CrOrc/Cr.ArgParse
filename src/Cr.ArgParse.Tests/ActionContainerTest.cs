@@ -20,10 +20,8 @@ namespace Cr.ArgParse.Tests
 
             Assert.That(res, Is.InstanceOf<StoreAction>());
             Asserter.AreEqual(
-                new StoreAction(new Argument("-e", "--example") { Destination = "example" })
-                {
-                    Container = actionContainer,
-                },
+                new StoreAction(new Argument("-e", "--example") { Destination = "example" }, actionContainer)
+                ,
                 res);
         }
 
@@ -43,10 +41,7 @@ namespace Cr.ArgParse.Tests
 
             Assert.That(res, Is.InstanceOf<CountAction>());
             Asserter.AreEqual(
-                new CountAction(argumentCopy)
-                {
-                    Container = actionContainer,
-                },
+                new CountAction(argumentCopy, actionContainer),
                 res);
         }
     }

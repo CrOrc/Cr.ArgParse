@@ -2,8 +2,8 @@
 {
     public class StoreFalseAction : StoreConstAction
     {
-        public StoreFalseAction(Argument argument)
-            : base(argument)
+        public StoreFalseAction(Argument argument, IActionContainer container)
+            : base(argument, container)
         {
         }
 
