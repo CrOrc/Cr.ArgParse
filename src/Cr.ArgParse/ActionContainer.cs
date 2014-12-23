@@ -10,9 +10,9 @@ using Action = Cr.ArgParse.Actions.Action;
 
 namespace Cr.ArgParse
 {
-    public class ActionContainer: IActionContainer
+    public class ActionContainer : IActionContainer
     {
-        private readonly IDictionary<string, Func<Argument, Action>> actionFactories;
+        private readonly IDictionary<string, System.Func<Argument, Action>> actionFactories;
 
         private readonly IList<Action> actions;
 
@@ -27,12 +27,7 @@ namespace Cr.ArgParse
 
         private IList<string> prefixes;
 
-        public ActionContainer()
-            : this(new ParserSettings())
-        {
-        }
-
-        public ActionContainer(ParserSettings parserSettings)
+        public ActionContainer(ParserSettings parserSettings = null, IActionContainer container = null)
         {
             parserSettings = parserSettings ?? new ParserSettings();
             typeFactoriesByName =
@@ -48,7 +43,6 @@ namespace Cr.ArgParse
                 {"timespan", typeof (TimeSpan)}
             });
 
-            Description = parserSettings.Description ?? "";
             Prefixes = parserSettings.Prefixes;
             ConflictHandlerType = parserSettings.ConflictHandlerType;
 
@@ -85,6 +79,8 @@ namespace Cr.ArgParse
             // whether or not there are any optionals that look like negative
             // numbers -- uses a list so it can be shared and edited
             HasNegativeNumberOptionals = new List<bool>();
+
+            Container = container ?? this;
         }
 
         private IDictionary<string, Func<Argument, Action>> ActionFactories
@@ -99,10 +95,12 @@ namespace Cr.ArgParse
             get { return actions; }
         }
 
+        IList<Action> IActionContainer.Actions{get { return Actions; }}
+
         private ConflictHandlerType ConflictHandlerType { get; set; }
+        protected IActionContainer Container { get; private set; }
         public string DefaultAction { get; set; }
         protected Func<string, object> DefaultTypeFactory { get; set; }
-        public string Description { get; set; }
         public virtual IList<bool> HasNegativeNumberOptionals { get; private set; }
 
         private IEnumerable<string> LongPrefixes
@@ -110,17 +108,24 @@ namespace Cr.ArgParse
             get { return Prefixes.Where(it => it.Length > 1); }
         }
 
-        public virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; private set; }
+        protected virtual IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups { get; set; }
+
+        IList<MutuallyExclusiveGroup> IActionContainer.MutuallyExclusiveGroups
+        {
+            get { return MutuallyExclusiveGroups; }
+        }
 
         protected Regex NegativeNumberMatcher
         {
             get { return negativeNumberMatcher; }
         }
 
-        public virtual IDictionary<string, Action> OptionStringActions
+        protected virtual IDictionary<string, Action> OptionStringActions
         {
             get { return optionStringActions; }
         }
+
+        IDictionary<string, Action> IActionContainer.OptionStringActions{get { return OptionStringActions; }}
 
         public virtual IList<string> Prefixes
         {
@@ -143,9 +148,32 @@ namespace Cr.ArgParse
             get { return Prefixes.Where(it => it.Length == 1); }
         }
 
+        public virtual Action AddAction(Action action)
+        {
+            if (ReferenceEquals(action, null))
+                throw new ArgumentNullException("action");
+            CheckConflict(action);
+
+            Actions.Add(action);
+            action.Container = this;
+
+            foreach (string optionString in action.OptionStrings)
+                OptionStringActions[optionString] = action;
+
+            if (!HasNegativeNumberOptionals.IsTrue() &&
+                action.OptionStrings.Any(optionString => NegativeNumberMatcher.IsMatch(optionString)))
+                HasNegativeNumberOptionals.Add(true);
+            return action;
+        }
+
+        public virtual void RemoveAction(Action action)
+        {
+            Actions.Remove(action);
+        }
+
         public ArgumentGroup AddArgumentGroup(string title, string description = null)
         {
-            var group = new ArgumentGroup(this, title, description ?? title);
+            var group = new ArgumentGroup(this);
             ActionGroups.Add(group);
             return group;
         }
@@ -164,11 +192,11 @@ namespace Cr.ArgParse
 
         public Action AddArgument(Argument argument)
         {
-            var preparedArgument =
+            Argument preparedArgument =
                 !IsOptionalArgument(argument)
                     ? PreparePositionalArgument(argument)
                     : PrepareOptionalArgument(argument);
-            var argumentAction = CreateAction(preparedArgument);
+            Action argumentAction = CreateAction(preparedArgument);
             if (ReferenceEquals(argumentAction, null))
                 throw new ParserException("Unregistered action exception");
             return AddAction(argumentAction);
@@ -191,9 +219,9 @@ namespace Cr.ArgParse
 
         private bool IsOptionalArgument(Argument argument)
         {
-            var ret = !argument.OptionStrings.IsNullOrEmpty() &&
-                      (argument.OptionStrings.Count != 1 ||
-                       StartsWithPrefix(argument.OptionStrings[0]));
+            bool ret = !argument.OptionStrings.IsNullOrEmpty() &&
+                       (argument.OptionStrings.Count != 1 ||
+                        StartsWithPrefix(argument.OptionStrings[0]));
 
             return ret;
         }
@@ -213,22 +241,22 @@ namespace Cr.ArgParse
         public void CheckConflict(Action action)
         {
             var conflOptionals = new List<KeyValuePair<string, Action>>();
-            foreach (var optionString in action.OptionStrings)
+            foreach (string optionString in action.OptionStrings)
             {
                 Action conflOptional;
                 if (OptionStringActions.TryGetValue(optionString, out conflOptional))
                     conflOptionals.Add(new KeyValuePair<string, Action>(optionString, conflOptional));
             }
             if (!conflOptionals.Any()) return;
-            var confictHandler = GetConflictHandler();
+            Action<Action, IEnumerable<KeyValuePair<string, Action>>> confictHandler = GetConflictHandler();
             confictHandler(action, conflOptionals);
         }
 
         private void HandleConflictWithError(Action action,
             IEnumerable<KeyValuePair<string, Action>> conflictingActions)
         {
-            var conflictionOptions = conflictingActions.Select(it => it.Key).ToList();
-            var conflictString = string.Join(", ", conflictionOptions);
+            List<string> conflictionOptions = conflictingActions.Select(it => it.Key).ToList();
+            string conflictString = string.Join(", ", conflictionOptions);
             if (conflictionOptions.Count == 1)
                 throw new ParserException(string.Format("Confliction option string: {0}", conflictString));
             throw new ParserException(string.Format("Confliction option strings: {0}", conflictString));
@@ -249,29 +277,6 @@ namespace Cr.ArgParse
             }
         }
 
-        public virtual Action AddAction(Action action)
-        {
-            if (ReferenceEquals(action, null))
-                throw new ArgumentNullException("action");
-            CheckConflict(action);
-
-            Actions.Add(action);
-            action.Container = this;
-
-            foreach (var optionString in action.OptionStrings)
-                OptionStringActions[optionString] = action;
-
-            if (!HasNegativeNumberOptionals.IsTrue() &&
-                action.OptionStrings.Any(optionString => NegativeNumberMatcher.IsMatch(optionString)))
-                HasNegativeNumberOptionals.Add(true);
-            return action;
-        }
-
-        public virtual void RemoveAction(Action action)
-        {
-            Actions.Remove(action);
-        }
-
         private string StripPrefix(string optionString)
         {
             if (string.IsNullOrEmpty(optionString))
@@ -283,10 +288,11 @@ namespace Cr.ArgParse
 
         private Action CreateAction(Argument argument)
         {
-            var argumentActionFactory = argument.ActionFactory ??
-                                        ActionFactories.SafeGetValue(!string.IsNullOrWhiteSpace(argument.ActionName)
-                                            ? argument.ActionName
-                                            : DefaultAction);
+            Func<Argument, Action> argumentActionFactory = argument.ActionFactory ??
+                                                           ActionFactories.SafeGetValue(
+                                                               !string.IsNullOrWhiteSpace(argument.ActionName)
+                                                                   ? argument.ActionName
+                                                                   : DefaultAction);
             return argumentActionFactory != null ? argumentActionFactory(argument) : null;
         }
 
@@ -301,7 +307,7 @@ namespace Cr.ArgParse
         {
             var res = new Argument(argument, new string[] {});
             // mark positional arguments as required if at least one is always required
-            var valueCount = res.ValueCount;
+            ValueCount valueCount = res.ValueCount;
             if (valueCount == null || valueCount.Min.HasValue && valueCount.Min > 0)
                 res.IsRequired = true;
             else

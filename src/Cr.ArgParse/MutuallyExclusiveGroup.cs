@@ -6,7 +6,7 @@ namespace Cr.ArgParse
     public class MutuallyExclusiveGroup : ArgumentGroup
     {
         public MutuallyExclusiveGroup(ActionContainer container, bool isRequired = false)
-            : base(container, null, null)
+            : base(container)
         {
             IsRequired = isRequired;
         }

@@ -5,9 +5,8 @@ namespace Cr.ArgParse
 {
     public class ArgumentGroup : ActionContainer
     {
-        public ArgumentGroup(ActionContainer container, string title = null, string description = null)
+        public ArgumentGroup(IActionContainer container) : base(container: container)
         {
-            Container = container;
             GroupActions = new List<Action>();
         }
 
@@ -16,7 +15,6 @@ namespace Cr.ArgParse
             get { return Container.Actions; }
         }
 
-        public ActionContainer Container { get; set; }
         public IList<Action> GroupActions { get; private set; }
 
         public override IList<bool> HasNegativeNumberOptionals
@@ -24,12 +22,12 @@ namespace Cr.ArgParse
             get { return Container.HasNegativeNumberOptionals; }
         }
 
-        public override IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups
+        protected override IList<MutuallyExclusiveGroup> MutuallyExclusiveGroups
         {
             get { return Container.MutuallyExclusiveGroups; }
         }
 
-        public override IDictionary<string, Action> OptionStringActions
+        protected override IDictionary<string, Action> OptionStringActions
         {
             get { return Container.OptionStringActions; }
         }
@@ -41,7 +39,7 @@ namespace Cr.ArgParse
 
         public override Action AddAction(Action action)
         {
-            var res = base.AddAction(action);
+            Action res = base.AddAction(action);
             GroupActions.Add(res);
             return res;
         }

@@ -3,24 +3,19 @@ using NUnit.Framework;
 
 namespace Cr.ArgParse.Tests
 {
-    [TestFixture] public class ActionContainerTest:BaseTest
+    [TestFixture] public class ActionContainerTest : BaseTest
     {
-        [Test] public void CreateDefault()
-        {
-            var actionContainer = new ActionContainer();
-            CollectionAssert.AreEqual(new[] {"--", "-", "/"}, actionContainer.Prefixes);
-        }
-
         [Test] public void AddOneOptionalArgument()
         {
             var actionContainer = new ActionContainer();
-            var res = actionContainer.AddArgument(new Argument("-e", "--example"));
+            Action res = actionContainer.AddArgument(new Argument("-e", "--example"));
 
-            CollectionAssert.AreEquivalent(new[] {"-e", "--example"}, actionContainer.OptionStringActions.Keys);
+            CollectionAssert.AreEquivalent(new[] {"-e", "--example"},
+                ((IActionContainer) actionContainer).OptionStringActions.Keys);
 
             Assert.That(res, Is.InstanceOf<StoreAction>());
             Asserter.AreEqual(
-                new StoreAction(new Argument("-e", "--example") { Destination = "example" }, actionContainer)
+                new StoreAction(new Argument("-e", "--example") {Destination = "example"}, actionContainer)
                 ,
                 res);
         }
@@ -34,7 +29,7 @@ namespace Cr.ArgParse.Tests
             };
             var argumentCopy = new Argument(argument);
             argumentCopy.Destination = "example";
-            var res =
+            Action res =
                 actionContainer.AddArgument(argument);
 
             CollectionAssert.AreEquivalent(new[] {"-e", "--example"}, argument.OptionStrings);
@@ -43,6 +38,12 @@ namespace Cr.ArgParse.Tests
             Asserter.AreEqual(
                 new CountAction(argumentCopy, actionContainer),
                 res);
+        }
+
+        [Test] public void CreateDefault()
+        {
+            var actionContainer = new ActionContainer();
+            CollectionAssert.AreEqual(new[] {"--", "-", "/"}, actionContainer.Prefixes);
         }
     }
 }
